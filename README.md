@@ -135,5 +135,5 @@ Contributions are welcome! 🎉
 
 ## 📬 **Contact**
 📧 Email: **jesse.purcell@my.jcu.edu.au**  
-🐦 Twitter: **[@jessepurcell](https://twitter.com/jessepurcell)**  
+🐦 Twitter: **[@Slaydevil1](https://x.com/Slaydevil1)**  
 💻 GitHub: **[jessepurcell](https://github.com/jessepurcell)**  
