@@ -2,10 +2,10 @@
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/jessepurcell/gameboy-emulator/ci.yml?branch=main)
 ![GitHub repo size](https://img.shields.io/github/repo-size/jessepurcell/gameboy-emulator)
 ![GitHub license](https://img.shields.io/github/license/jessepurcell/gameboy-emulator)
-![C++ Version](https://img.shields.io/badge/C%2B%2B-20-blue.svg)
+![C++ Version](https://img.shields.io/badge/C%2B%2B-23-blue.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/jessepurcell/gameboy-emulator)
 
-🚀 **Game Boy Emulator** is a work-in-progress emulator written in **C++20** that aims to emulate the original **Nintendo Game Boy (DMG-01)** hardware. This project is still under active development, with the goal of accurately replicating the CPU, memory, and graphics system.
+🚀 **Game Boy Emulator** is a work-in-progress emulator written in **C++23** that aims to emulate the original **Nintendo Game Boy (DMG-01)** hardware. This project is still under active development, with the goal of accurately replicating the CPU, memory, and graphics system.
 
 ---
 
