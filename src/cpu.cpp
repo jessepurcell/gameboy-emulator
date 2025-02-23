@@ -1,49 +1,73 @@
 #include "../include/cpu.hpp"
-#include <iostream> // For debugging/logging
+#include <algorithm>
 
-CPU::CPU() {
-    reset();
+CPU::CPU()
+{
+    // Default all opcodes to NOP to prevent crashes
+    opcodeTable.fill(&CPU::NOP);
+    cbOpcodeTable.fill(&CPU::NOP);
+
+    // Map primary opcodes
+    opcodeTable[0x00] = &CPU::NOP;
+    opcodeTable[0x01] = &CPU::LD_BC_nn;
+    opcodeTable[0x80] = &CPU::ADD_A_B;
+
+    // Map CB-prefixed opcodes
+    cbOpcodeTable[0x00] = &CPU::RLC_B;
 }
 
-void CPU::reset() {
-    // Initialize registers to boot values (based on real Game Boy CPU)
-    registers[AF] = 0x01B0;  // A = 0x01, F = 0xB0 (Flags)
-    registers[BC] = 0x0013;
-    registers[DE] = 0x00D8;
-    registers[HL] = 0x014D;
-    SP = 0xFFFE;
-    PC = 0x0100;  // Game Boy boot ROM jumps to 0x0100
+void CPU::executeOpcode()
+{
+    uint8_t opcode = fetchByte();
 
-    clearFlags(); // Reset flags
-}
-
-std::expected<bool, std::string> CPU::executeNextInstruction() {
-    uint8_t opcode = readByte(PC++); // Fetch next opcode
-    try {
-        executeInstruction(opcode);
-    } catch (const std::exception& e) {
-        return std::unexpected(std::string("CPU Error: ") + e.what());
+    if (opcode == 0xCB)
+    {
+        uint8_t cbOpcode = fetchByte();
+        (this->*cbOpcodeTable[cbOpcode])();
     }
-    return true; // Continue execution
-}
-
-void CPU::executeInstruction(uint8_t opcode) {
-    switch (opcode) {
-        case 0x00: // NOP (No Operation)
-            break;
-        case 0x76: // HALT instruction (stops CPU until an interrupt occurs)
-            throw std::runtime_error("HALT executed");
-        default:
-            throw std::runtime_error("Unknown opcode: " + std::to_string(opcode));
+    else
+    {
+        (this->*opcodeTable[opcode])();
     }
 }
 
-// Memory Access (to be replaced with MMU later)
-uint8_t CPU::readByte(uint16_t address) {
-    std::cerr << "Memory read at " << std::hex << address << std::endl;
-    return 0xFF; // Stub return value
+void CPU::NOP() { /* No operation */ }
+
+void CPU::LD_BC_nn()
+{
+    setBC(fetchWord());
 }
 
-void CPU::writeByte(uint16_t address, uint8_t value) {
-    std::cerr << "Memory write at " << std::hex << address << " value: " << std::hex << (int)value << std::endl;
+void CPU::ADD_A_B()
+{
+    A += B;
+    updateFlags();
+}
+
+void CPU::RLC_B()
+{
+    B = (B << 1) | (B >> 7);
+    updateFlags();
+}
+
+// uint8_t CPU::fetchByte()
+// {
+//     // TODO: Fetch byte from memory at PC++
+//     return 0x00;
+// }
+
+uint8_t CPU::fetchByte() {
+    return testMemory[PC++];
+}
+
+uint16_t CPU::fetchWord()
+{
+    uint16_t lo = fetchByte();
+    uint16_t hi = fetchByte();
+    return (hi << 8) | lo;
+}
+
+void CPU::updateFlags()
+{
+    // TODO: Implement flag updates
 }

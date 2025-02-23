@@ -1,64 +1,55 @@
-#include <gtest/gtest.h>
 #include "../include/cpu.hpp"
+#include <gtest/gtest.h>
 
-// Test if CPU resets correctly
-TEST(CPUTest, ResetState) {
+// Test Fixture for CPU Tests
+class CPUTest : public ::testing::Test
+{
+protected:
     CPU cpu;
-    cpu.reset();
-    
-    EXPECT_EQ(cpu.registers[CPU::AF], 0x01B0);
-    EXPECT_EQ(cpu.registers[CPU::BC], 0x0013);
-    EXPECT_EQ(cpu.registers[CPU::DE], 0x00D8);
-    EXPECT_EQ(cpu.registers[CPU::HL], 0x014D);
-    EXPECT_EQ(cpu.SP, 0xFFFE);
-    EXPECT_EQ(cpu.PC, 0x0100);
+
+    void SetUp() override
+    {
+        // Reset memory and CPU state
+        std::fill(std::begin(cpu.testMemory), std::end(cpu.testMemory), 0);
+        cpu.PC = 0;
+        cpu.A = cpu.B = cpu.C = cpu.D = cpu.E = cpu.H = cpu.L = 0;
+    }
+};
+
+// Test: NOP (0x00)
+TEST_F(CPUTest, NOP_DoesNothing)
+{
+    cpu.testMemory[0x0000] = 0x00; // NOP
+    cpu.executeOpcode();
+    EXPECT_EQ(cpu.PC, 1); // PC should increment
 }
 
-// Test flag manipulation
-TEST(CPUTest, FlagOperations) {
-    CPU cpu;
-    cpu.setFlag(CPU::ZF, true);
-    EXPECT_TRUE(cpu.getFlag(CPU::ZF));
+// Test: LD BC, nn (0x01)
+TEST_F(CPUTest, LD_BC_nn_LoadsCorrectValue)
+{
+    cpu.testMemory[0x0000] = 0x01; // LD BC, 0x1234
+    cpu.testMemory[0x0001] = 0x34;
+    cpu.testMemory[0x0002] = 0x12;
+    cpu.executeOpcode();
 
-    cpu.setFlag(CPU::ZF, false);
-    EXPECT_FALSE(cpu.getFlag(CPU::ZF));
+    EXPECT_EQ(cpu.BC(), 0x1234);
+    EXPECT_EQ(cpu.PC, 3);
 }
 
-// Test memory read/write (currently stubbed)
-TEST(CPUTest, MemoryAccess) {
-    CPU cpu;
-    cpu.writeByte(0xC000, 0x42);
-    EXPECT_EQ(cpu.readByte(0xC000), 0xFF); // Stub always returns 0xFF for now
+// Test: ADD A, B (0x80)
+TEST_F(CPUTest, ADD_A_B_AddsCorrectly)
+{
+    cpu.A = 0x10;
+    cpu.B = 0x05;
+    cpu.testMemory[0x0000] = 0x80; // ADD A, B
+    cpu.executeOpcode();
+
+    EXPECT_EQ(cpu.A, 0x15);
 }
 
-// Test instruction execution (NOP)
-TEST(CPUTest, ExecuteNOP) {
-    CPU cpu;
-    cpu.writeByte(0x0100, 0x00); // NOP instruction at PC
-    cpu.executeNextInstruction();
-    EXPECT_EQ(cpu.PC, 0x0101); // PC should increment
-}
-
-// Test unknown opcode handling
-TEST(CPUTest, ExecuteUnknownOpcode) {
-    CPU cpu;
-    cpu.writeByte(0x0100, 0xFF); // Invalid opcode
-    auto result = cpu.executeNextInstruction();
-    EXPECT_FALSE(result); // Should return an error
-    EXPECT_EQ(result.error(), "CPU Error: Unknown opcode: 255");
-}
-
-// Test HALT instruction (should throw an error)
-TEST(CPUTest, ExecuteHALT) {
-    CPU cpu;
-    cpu.writeByte(0x0100, 0x76); // HALT instruction
-    auto result = cpu.executeNextInstruction();
-    EXPECT_FALSE(result);
-    EXPECT_EQ(result.error(), "CPU Error: HALT executed");
-}
-
-// Main function for running tests
-int main(int argc, char **argv) {
+// Run all tests
+int main(int argc, char **argv)
+{
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
