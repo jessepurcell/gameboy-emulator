@@ -5,22 +5,28 @@ project(GameboyEmulator)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Add SDL3 submodule
-set(SDL3_DIR "${CMAKE_SOURCE_DIR}/third_party/SDL")
-add_subdirectory(${SDL3_DIR} EXCLUDE_FROM_ALL)
+# Add your emulator executable
+add_executable(emulator src/main.cpp src/cpu.cpp)  # Ensure all source files are included
 
-# Add Google Test submodule
+# Include directories (if needed)
+target_include_directories(emulator PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
+# Enable testing
+enable_testing()
+
+# Add Google Test
 set(GTEST_DIR "${CMAKE_SOURCE_DIR}/third_party/googletest")
 add_subdirectory(${GTEST_DIR})
 
-# Add your emulator executable
-add_executable(emulator src/main.cpp)
-target_link_libraries(emulator PRIVATE SDL3::SDL3-static)
+# Add test executable
+add_executable(tests tests/test_cpu.cpp src/cpu.cpp)
+target_link_libraries(tests PRIVATE gtest gtest_main)
+target_include_directories(tests PRIVATE ${GTEST_DIR}/include src)
 
-# Add unit tests
-# add_executable(tests tests/test_cpu.cpp)
-# target_link_libraries(tests PRIVATE gtest gtest_main)
+# Ensure pthread is linked on Linux
+if (UNIX AND NOT APPLE)
+    target_link_libraries(tests PRIVATE pthread)
+endif()
 
-# Enable CTest to allow running `ctest`
-enable_testing()
-# add_test(NAME EmulatorTests COMMAND tests)
+# Register tests
+add_test(NAME EmulatorTests COMMAND tests)

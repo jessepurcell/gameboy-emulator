@@ -1,4 +1,4 @@
-#include "CPU.hpp"
+#include "../include/cpu.hpp"
 #include <iostream> // For debugging/logging
 
 CPU::CPU() {
