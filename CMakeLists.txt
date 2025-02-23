@@ -1,25 +1,26 @@
-cmake_minimum_required(VERSION 3.14)
-project(GameBoyEmulator)
+cmake_minimum_required(VERSION 3.16)
+project(GameboyEmulator)
 
-# Use C++20 standard
-set(CMAKE_CXX_STANDARD 20)
+# Enable C++23
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Define the source files
-set(SOURCES
-    src/main.cpp
-    src/cpu.cpp
-    src/memory.cpp
-    src/emulator.cpp
-)
+# Add SDL3 submodule
+set(SDL3_DIR "${CMAKE_SOURCE_DIR}/third_party/SDL")
+add_subdirectory(${SDL3_DIR} EXCLUDE_FROM_ALL)
 
-# Create an executable target for the emulator
-add_executable(gameboy-emulator ${SOURCES})
+# Add Google Test submodule
+set(GTEST_DIR "${CMAKE_SOURCE_DIR}/third_party/googletest")
+add_subdirectory(${GTEST_DIR})
 
-# GoogleTest setup
+# Add your emulator executable
+add_executable(emulator src/main.cpp)
+target_link_libraries(emulator PRIVATE SDL3::SDL3-static)
+
+# Add unit tests
+add_executable(tests tests/test_cpu.cpp)
+target_link_libraries(tests PRIVATE gtest gtest_main)
+
+# Enable CTest to allow running `ctest`
 enable_testing()
-add_subdirectory(third_party/googletest)
-add_subdirectory(tests)
-
-# Link GoogleTest with the test runner
-target_link_libraries(gameboy-emulator PRIVATE gtest gtest_main)
+add_test(NAME EmulatorTests COMMAND tests)
