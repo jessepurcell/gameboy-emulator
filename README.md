@@ -22,11 +22,11 @@
 ## 🎮 **Features (Planned)**
 ❌ **Full CPU Emulation** – Implements the Game Boy's **LR35902** CPU (Z80-like).  
 ❌ **Memory Management** – Emulates **8KB RAM**, **8KB VRAM**, and cartridge ROM banking.  
-❌ **Graphics (PPU) Emulation** – Uses SDL2 for pixel-accurate rendering.  
+❌ **Graphics (PPU) Emulation** – Uses SDL3 for pixel-accurate rendering.  
 ❌ **Sound Emulation** – Implements the Game Boy’s **APU** (Audio Processing Unit).  
 ❌ **Input Handling** – Maps keyboard/controller inputs to the Game Boy’s buttons.  
 ❌ **Unit Tests** – Uses **GoogleTest** for regression testing.  
-❌ **Cross-Platform Support** – Runs on **Windows, macOS, and Linux**.  
+❌ **Cross-Platform Support** – Runs on **Windows and Linux**.  
 
 🚧 **Development is ongoing! Check the [roadmap](#-roadmap) for upcoming milestones.**  
 
@@ -35,7 +35,7 @@
 ## ⚙️ **Installation**
 ### **🔹 Requirements**
 Ensure you have the following installed:
-- **C++20** compiler (GCC, Clang, or MSVC)
+- **C++23** compiler (GCC, Clang, or MSVC)
 - **CMake 3.14+**
 - **GoogleTest** (for testing)
 - **SDL3** (for graphics rendering)
