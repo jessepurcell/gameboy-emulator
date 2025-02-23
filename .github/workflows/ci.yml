@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: 📥 Checkout repository
         uses: actions/checkout@v3
+        with:
+          submodules: recursive  # Ensures all submodules are cloned and initialized
 
       - name: 🛠 Set up caching (Linux)
         if: runner.os == 'Linux'
