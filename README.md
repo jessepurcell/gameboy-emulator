@@ -13,8 +13,6 @@
 - [🎮 Features](#-features)
 - [⚙️ Installation](#️-installation)
 - [🚀 Usage](#-usage)
-- [🛠️ Project Structure](#️-project-structure)
-- [🧪 Running Tests](#-running-tests)
 - [📝 Roadmap](#-roadmap)
 - [📜 License](#-license)
 - [🤝 Contributing](#-contributing)
@@ -40,7 +38,7 @@ Ensure you have the following installed:
 - **C++20** compiler (GCC, Clang, or MSVC)
 - **CMake 3.14+**
 - **GoogleTest** (for testing)
-- **SDL2** (for graphics rendering)
+- **SDL3** (for graphics rendering)
 
 ### **🔹 Build Instructions**
 ```sh
@@ -81,21 +79,6 @@ When implemented, you will be able to run a Game Boy ROM like this:
 | D-Pad Down    | Down Arrow      |
 | D-Pad Left    | Left Arrow      |
 | D-Pad Right   | Right Arrow     |
-
----
-
-## 🧪 **Running Tests**
-This emulator uses **GoogleTest** for unit testing.
-
-```sh
-cd build
-ctest
-```
-
-Run tests manually:
-```sh
-./tests
-```
 
 ---
 
