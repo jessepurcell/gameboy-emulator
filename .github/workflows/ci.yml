@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v3
+
+      - name: 🛠 Set up caching (Linux)
+        if: runner.os == 'Linux'
+        uses: actions/cache@v3
+        with:
+          path: ~/.ccache
+          key: ${{ runner.os }}-ccache-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-ccache-
+
+      - name: 🔧 Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt update
+          sudo apt install -y cmake g++ libsdl2-dev ccache
+
+      - name: ⚡ Enable ccache (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          ccache --max-size=500M
+          export CC="ccache gcc"
+          export CXX="ccache g++"
+
+      - name: 🔧 Install dependencies (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          choco install -y cmake ninja
+          git clone https://github.com/microsoft/vcpkg.git
+          cd vcpkg
+          .\bootstrap-vcpkg.bat
+          .\vcpkg install sdl2:x64-windows gtest:x64-windows
+
+      - name: 🏗 Configure CMake (Linux)
+        if: runner.os == 'Linux'
+        run: cmake -S . -B build -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+      - name: 🏗 Configure CMake (Windows)
+        if: runner.os == 'Windows'
+        run: cmake -S . -B build -G "Ninja" -DCMAKE_TOOLCHAIN_FILE=./vcpkg/scripts/buildsystems/vcpkg.cmake
+
+      - name: 🔨 Build the project
+        run: cmake --build build --parallel
+
+      - name: 🧪 Run tests (Linux)
+        if: runner.os == 'Linux'
+        working-directory: build
+        run: ctest --output-on-failure
+
+      - name: 🧪 Run tests (Windows)
+        if: runner.os == 'Windows'
+        working-directory: build
+        run: ctest -C Debug --output-on-failure
