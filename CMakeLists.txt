@@ -13,30 +13,24 @@ list(REMOVE_ITEM SRC_FILES ${CMAKE_SOURCE_DIR}/src/main.cpp)
 # Collect all test files in `tests/`
 file(GLOB TEST_FILES tests/*.cpp)
 
-# Add your emulator executable
-add_executable(emulator src/main.cpp ${SRC_FILES})
-target_include_directories(emulator PRIVATE ${CMAKE_SOURCE_DIR}/include)
+# Add a library for the shared code
+add_library(emulator-lib STATIC ${SRC_FILES})
+target_include_directories(emulator-lib PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
+# Add the emulator executable
+add_executable(emulator src/main.cpp)
+target_link_libraries(emulator PRIVATE emulator-lib)
 
 # Enable testing
 enable_testing()
 
-# Add Google Test
-set(GTEST_DIR "${CMAKE_SOURCE_DIR}/third_party/googletest")
-add_subdirectory(${GTEST_DIR})
+# Add GoogleTest (if using git submodule)
+add_subdirectory(third_party/googletest)  # Change path as needed
 
-# Loop through all test files and create separate test executables
-foreach(TEST_FILE ${TEST_FILES})
-    get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
+# Add the test executable
+add_executable(runTests tests/test_cpu.cpp tests/test_memory.cpp)
+target_link_libraries(runTests PRIVATE emulator-lib gtest_main)
 
-    # Create an executable for each test file (WITHOUT `main.cpp`)
-    add_executable(${TEST_NAME} ${TEST_FILE} ${SRC_FILES})
-
-    # Include the necessary directories
-    target_include_directories(${TEST_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
-
-    # Link against GoogleTest
-    target_link_libraries(${TEST_NAME} gtest gtest_main pthread)
-
-    # Register the test with CTest
-    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
-endforeach()
+# Register tests (makes them visible in VS Code)
+include(GoogleTest)
+gtest_discover_tests(runTests)

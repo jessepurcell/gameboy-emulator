@@ -33,8 +33,13 @@ uint8_t Memory::readByte(uint16_t address) {
  * @param value The byte value to write to the specified address.
  */
 void Memory::writeByte(uint16_t address, uint8_t value) {
+    if (address < 0 || address >= 0x10000) {
+        // Handle invalid address or throw exception
+        return;
+    }
     memory[address] = value;
 }
+
 
 /**
  * @brief Reads a 16-bit word from the specified memory address.
