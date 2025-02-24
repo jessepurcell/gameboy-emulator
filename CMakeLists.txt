@@ -1,3 +1,4 @@
+# Set minimum CMake version and project
 cmake_minimum_required(VERSION 3.16)
 project(GameboyEmulator)
 
@@ -5,11 +6,16 @@ project(GameboyEmulator)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Add your emulator executable
-add_executable(emulator src/main.cpp src/cpu.cpp)  # Ensure all source files are included
+# Collect all source files in `src/`, but EXCLUDE `main.cpp`
+file(GLOB SRC_FILES src/*.cpp)
+list(REMOVE_ITEM SRC_FILES ${CMAKE_SOURCE_DIR}/src/main.cpp)
 
-# Include directories (if needed)
-target_include_directories(emulator PRIVATE ${CMAKE_SOURCE_DIR}/src)
+# Collect all test files in `tests/`
+file(GLOB TEST_FILES tests/*.cpp)
+
+# Add your emulator executable
+add_executable(emulator src/main.cpp ${SRC_FILES})
+target_include_directories(emulator PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 # Enable testing
 enable_testing()
@@ -18,15 +24,19 @@ enable_testing()
 set(GTEST_DIR "${CMAKE_SOURCE_DIR}/third_party/googletest")
 add_subdirectory(${GTEST_DIR})
 
-# Add test executable
-add_executable(tests tests/test_cpu.cpp src/cpu.cpp)
-target_link_libraries(tests PRIVATE gtest gtest_main)
-target_include_directories(tests PRIVATE ${GTEST_DIR}/include src)
+# Loop through all test files and create separate test executables
+foreach(TEST_FILE ${TEST_FILES})
+    get_filename_component(TEST_NAME ${TEST_FILE} NAME_WE)
 
-# Ensure pthread is linked on Linux
-if (UNIX AND NOT APPLE)
-    target_link_libraries(tests PRIVATE pthread)
-endif()
+    # Create an executable for each test file (WITHOUT `main.cpp`)
+    add_executable(${TEST_NAME} ${TEST_FILE} ${SRC_FILES})
 
-# Register tests
-add_test(NAME EmulatorTests COMMAND tests)
+    # Include the necessary directories
+    target_include_directories(${TEST_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
+
+    # Link against GoogleTest
+    target_link_libraries(${TEST_NAME} gtest gtest_main pthread)
+
+    # Register the test with CTest
+    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
+endforeach()

@@ -1,21 +1,23 @@
 #pragma once
 
+#include "memory.hpp"
+
 #include <array>
 #include <cstdint>
 
 class CPU
 {
 public:
-    uint8_t testMemory[0x10000] = {}; // 64KB of memory
+    uint8_t testMemory[0x10000] = {}; 
     using OpcodeHandler = void (CPU::*)();
-
-    CPU();                // Constructor to initialize the LUT
-    void executeOpcode(); // Fetch, decode, and execute an instruction
+    CPU(Memory& memory);
+    void executeOpcode();
 
     // Registers
     uint8_t A = 0, B = 0, C = 0, D = 0, E = 0, H = 0, L = 0;
     uint16_t SP = 0, PC = 0;
     uint16_t BC() const { return (B << 8) | C; }
+
     void setBC(uint16_t value)
     {
         B = value >> 8;
@@ -28,6 +30,7 @@ public:
     void updateFlags();
 
 private:
+    Memory& memory;
     // Lookup tables for opcodes
     std::array<OpcodeHandler, 256> opcodeTable{};
     std::array<OpcodeHandler, 256> cbOpcodeTable{};

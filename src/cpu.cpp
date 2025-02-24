@@ -1,7 +1,8 @@
 #include "../include/cpu.hpp"
 #include <algorithm>
 
-CPU::CPU()
+CPU::CPU(Memory &memory)
+    : memory(memory)
 {
     // Default all opcodes to NOP to prevent crashes
     opcodeTable.fill(&CPU::NOP);
@@ -50,14 +51,9 @@ void CPU::RLC_B()
     updateFlags();
 }
 
-// uint8_t CPU::fetchByte()
-// {
-//     // TODO: Fetch byte from memory at PC++
-//     return 0x00;
-// }
-
-uint8_t CPU::fetchByte() {
-    return testMemory[PC++];
+uint8_t CPU::fetchByte()
+{
+    return memory.readByte(PC++);
 }
 
 uint16_t CPU::fetchWord()
