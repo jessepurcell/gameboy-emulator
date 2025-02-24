@@ -64,9 +64,9 @@ jobs:
       - name: 🧪 Run tests (Linux)
         if: runner.os == 'Linux'
         working-directory: build
-        run: ctest --output-on-failure
+        run: ctest --output-on-failure --verbose
 
       - name: 🧪 Run tests (Windows)
         if: runner.os == 'Windows'
         working-directory: build
-        run: ctest -C Debug --output-on-failure
+        run: ctest -C Debug --output-on-failure --verbose
