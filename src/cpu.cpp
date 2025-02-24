@@ -37,7 +37,7 @@ CPU::CPU(Memory &memory)
     opcodeTable[0x53] = std::bind(&CPU::LD_r8_r8, this, std::ref(D), std::ref(E));
     opcodeTable[0x54] = std::bind(&CPU::LD_r8_r8, this, std::ref(D), std::ref(H));
     opcodeTable[0x55] = std::bind(&CPU::LD_r8_r8, this, std::ref(D), std::ref(L));
-    opcodeTable[0x56] = std::bind(&CPU::LD_r8_HL, this, std::ref(C));
+    opcodeTable[0x56] = std::bind(&CPU::LD_r8_HL, this, std::ref(D));
     opcodeTable[0x57] = std::bind(&CPU::LD_r8_r8, this, std::ref(D), std::ref(A));
 
     opcodeTable[0x58] = std::bind(&CPU::LD_r8_r8, this, std::ref(E), std::ref(B));
