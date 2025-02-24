@@ -1,49 +1,132 @@
 #include "../include/cpu.hpp"
-#include <iostream> // For debugging/logging
+#include <algorithm>
+#include <array>
 
-CPU::CPU() {
-    reset();
+CPU::CPU(Memory &memory)
+    : memory(memory)
+{
+    // Default all opcodes to NOP to prevent crashes
+    opcodeTable.fill([&]() { NOP(); });
+
+    // Map primary opcodes
+    opcodeTable[0x00] = std::bind(&CPU::NOP, this);
+    opcodeTable[0x01] = std::bind(&CPU::LD_BC_nn, this);
+    opcodeTable[0x80] = std::bind(&CPU::ADD_A_B, this);
+
+    opcodeTable[0x40] = std::bind(&CPU::LD_r8_r8, this, std::ref(B), std::ref(B));
+    opcodeTable[0x41] = std::bind(&CPU::LD_r8_r8, this, std::ref(B), std::ref(C));
+    opcodeTable[0x42] = std::bind(&CPU::LD_r8_r8, this, std::ref(B), std::ref(D));
+    opcodeTable[0x43] = std::bind(&CPU::LD_r8_r8, this, std::ref(B), std::ref(E));
+    opcodeTable[0x44] = std::bind(&CPU::LD_r8_r8, this, std::ref(B), std::ref(H));
+    opcodeTable[0x45] = std::bind(&CPU::LD_r8_r8, this, std::ref(B), std::ref(L));
+    opcodeTable[0x46] = std::bind(&CPU::LD_r8_HL, this, std::ref(B));
+    opcodeTable[0x47] = std::bind(&CPU::LD_r8_r8, this, std::ref(B), std::ref(A));
+
+    opcodeTable[0x48] = std::bind(&CPU::LD_r8_r8, this, std::ref(C), std::ref(B));
+    opcodeTable[0x49] = std::bind(&CPU::LD_r8_r8, this, std::ref(C), std::ref(C));
+    opcodeTable[0x4A] = std::bind(&CPU::LD_r8_r8, this, std::ref(C), std::ref(D));
+    opcodeTable[0x4B] = std::bind(&CPU::LD_r8_r8, this, std::ref(C), std::ref(E));
+    opcodeTable[0x4C] = std::bind(&CPU::LD_r8_r8, this, std::ref(C), std::ref(H));
+    opcodeTable[0x4D] = std::bind(&CPU::LD_r8_r8, this, std::ref(C), std::ref(L));
+    opcodeTable[0x4E] = std::bind(&CPU::LD_r8_HL, this, std::ref(C));
+    opcodeTable[0x4F] = std::bind(&CPU::LD_r8_r8, this, std::ref(C), std::ref(A));
+
+    opcodeTable[0x50] = std::bind(&CPU::LD_r8_r8, this, std::ref(D), std::ref(B));
+    opcodeTable[0x51] = std::bind(&CPU::LD_r8_r8, this, std::ref(D), std::ref(C));
+    opcodeTable[0x52] = std::bind(&CPU::LD_r8_r8, this, std::ref(D), std::ref(D));
+    opcodeTable[0x53] = std::bind(&CPU::LD_r8_r8, this, std::ref(D), std::ref(E));
+    opcodeTable[0x54] = std::bind(&CPU::LD_r8_r8, this, std::ref(D), std::ref(H));
+    opcodeTable[0x55] = std::bind(&CPU::LD_r8_r8, this, std::ref(D), std::ref(L));
+    opcodeTable[0x56] = std::bind(&CPU::LD_r8_HL, this, std::ref(C));
+    opcodeTable[0x57] = std::bind(&CPU::LD_r8_r8, this, std::ref(D), std::ref(A));
+
+    opcodeTable[0x58] = std::bind(&CPU::LD_r8_r8, this, std::ref(E), std::ref(B));
+    opcodeTable[0x59] = std::bind(&CPU::LD_r8_r8, this, std::ref(E), std::ref(C));
+    opcodeTable[0x5A] = std::bind(&CPU::LD_r8_r8, this, std::ref(E), std::ref(D));
+    opcodeTable[0x5B] = std::bind(&CPU::LD_r8_r8, this, std::ref(E), std::ref(E));
+    opcodeTable[0x5C] = std::bind(&CPU::LD_r8_r8, this, std::ref(E), std::ref(H));
+    opcodeTable[0x5D] = std::bind(&CPU::LD_r8_r8, this, std::ref(E), std::ref(L));
+    opcodeTable[0x5E] = std::bind(&CPU::LD_r8_HL, this, std::ref(E));
+    opcodeTable[0x5F] = std::bind(&CPU::LD_r8_r8, this, std::ref(E), std::ref(A));
+
+    opcodeTable[0x60] = std::bind(&CPU::LD_r8_r8, this, std::ref(H), std::ref(B));
+    opcodeTable[0x61] = std::bind(&CPU::LD_r8_r8, this, std::ref(H), std::ref(C));
+    opcodeTable[0x62] = std::bind(&CPU::LD_r8_r8, this, std::ref(H), std::ref(D));
+    opcodeTable[0x63] = std::bind(&CPU::LD_r8_r8, this, std::ref(H), std::ref(E));
+    opcodeTable[0x64] = std::bind(&CPU::LD_r8_r8, this, std::ref(H), std::ref(H));
+    opcodeTable[0x65] = std::bind(&CPU::LD_r8_r8, this, std::ref(H), std::ref(L));
+    opcodeTable[0x66] = std::bind(&CPU::LD_r8_HL, this, std::ref(H));
+    opcodeTable[0x67] = std::bind(&CPU::LD_r8_r8, this, std::ref(H), std::ref(A));
+
+    opcodeTable[0x68] = std::bind(&CPU::LD_r8_r8, this, std::ref(L), std::ref(B));
+    opcodeTable[0x69] = std::bind(&CPU::LD_r8_r8, this, std::ref(L), std::ref(C));
+    opcodeTable[0x6A] = std::bind(&CPU::LD_r8_r8, this, std::ref(L), std::ref(D));
+    opcodeTable[0x6B] = std::bind(&CPU::LD_r8_r8, this, std::ref(L), std::ref(E));
+    opcodeTable[0x6C] = std::bind(&CPU::LD_r8_r8, this, std::ref(L), std::ref(H));
+    opcodeTable[0x6D] = std::bind(&CPU::LD_r8_r8, this, std::ref(L), std::ref(L));
+    opcodeTable[0x6E] = std::bind(&CPU::LD_r8_HL, this, std::ref(L));
+    opcodeTable[0x6F] = std::bind(&CPU::LD_r8_r8, this, std::ref(L), std::ref(A));
+
+    opcodeTable[0x78] = std::bind(&CPU::LD_r8_r8, this, std::ref(A), std::ref(B));
+    opcodeTable[0x79] = std::bind(&CPU::LD_r8_r8, this, std::ref(A), std::ref(C));
+    opcodeTable[0x7A] = std::bind(&CPU::LD_r8_r8, this, std::ref(A), std::ref(D));
+    opcodeTable[0x7B] = std::bind(&CPU::LD_r8_r8, this, std::ref(A), std::ref(E));
+    opcodeTable[0x7C] = std::bind(&CPU::LD_r8_r8, this, std::ref(A), std::ref(H));
+    opcodeTable[0x7D] = std::bind(&CPU::LD_r8_r8, this, std::ref(A), std::ref(L));
+    opcodeTable[0x7E] = std::bind(&CPU::LD_r8_HL, this, std::ref(A));
+    opcodeTable[0x7F] = std::bind(&CPU::LD_r8_r8, this, std::ref(A), std::ref(A));
+    // Continue with more opcodes...
 }
 
-void CPU::reset() {
-    // Initialize registers to boot values (based on real Game Boy CPU)
-    registers[AF] = 0x01B0;  // A = 0x01, F = 0xB0 (Flags)
-    registers[BC] = 0x0013;
-    registers[DE] = 0x00D8;
-    registers[HL] = 0x014D;
-    SP = 0xFFFE;
-    PC = 0x0100;  // Game Boy boot ROM jumps to 0x0100
-
-    clearFlags(); // Reset flags
+void CPU::executeOpcode()
+{
+    uint8_t opcode = fetchByte();
+    opcodeTable[opcode]();
 }
 
-std::expected<bool, std::string> CPU::executeNextInstruction() {
-    uint8_t opcode = readByte(PC++); // Fetch next opcode
-    try {
-        executeInstruction(opcode);
-    } catch (const std::exception& e) {
-        return std::unexpected(std::string("CPU Error: ") + e.what());
-    }
-    return true; // Continue execution
+
+void CPU::NOP() { /* No operation */ }
+
+void CPU::LD_BC_nn()
+{
+    setBC(fetchWord());
 }
 
-void CPU::executeInstruction(uint8_t opcode) {
-    switch (opcode) {
-        case 0x00: // NOP (No Operation)
-            break;
-        case 0x76: // HALT instruction (stops CPU until an interrupt occurs)
-            throw std::runtime_error("HALT executed");
-        default:
-            throw std::runtime_error("Unknown opcode: " + std::to_string(opcode));
-    }
+void CPU::ADD_A_B()
+{
+    A += B;
+    updateFlags();
 }
 
-// Memory Access (to be replaced with MMU later)
-uint8_t CPU::readByte(uint16_t address) {
-    std::cerr << "Memory read at " << std::hex << address << std::endl;
-    return 0xFF; // Stub return value
+void CPU::RLC_B()
+{
+    B = (B << 1) | (B >> 7);
+    updateFlags();
 }
 
-void CPU::writeByte(uint16_t address, uint8_t value) {
-    std::cerr << "Memory write at " << std::hex << address << " value: " << std::hex << (int)value << std::endl;
+uint8_t CPU::fetchByte()
+{
+    return memory.readByte(PC++);
+}
+
+uint16_t CPU::fetchWord()
+{
+    uint16_t lo = fetchByte();
+    uint16_t hi = fetchByte();
+    return (hi << 8) | lo;
+}
+
+void CPU::updateFlags()
+{
+    // TODO: Implement flag updates
+}
+
+void CPU::LD_r8_r8(uint8_t &dest, uint8_t src)
+{
+    dest = src;
+}
+
+void CPU::LD_r8_HL(uint8_t &dest)
+{
+    dest = memory.readByte(HL());
 }

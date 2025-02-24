@@ -1,3 +1,4 @@
+# Set minimum CMake version and project
 cmake_minimum_required(VERSION 3.16)
 project(GameboyEmulator)
 
@@ -5,28 +6,31 @@ project(GameboyEmulator)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Add your emulator executable
-add_executable(emulator src/main.cpp src/cpu.cpp)  # Ensure all source files are included
+# Collect all source files in `src/`, but EXCLUDE `main.cpp`
+file(GLOB SRC_FILES src/*.cpp)
+list(REMOVE_ITEM SRC_FILES ${CMAKE_SOURCE_DIR}/src/main.cpp)
 
-# Include directories (if needed)
-target_include_directories(emulator PRIVATE ${CMAKE_SOURCE_DIR}/src)
+# Collect all test files in `tests/`
+file(GLOB TEST_FILES tests/*.cpp)
+
+# Add a library for the shared code
+add_library(emulator-lib STATIC ${SRC_FILES})
+target_include_directories(emulator-lib PRIVATE ${CMAKE_SOURCE_DIR}/include)
+
+# Add the emulator executable
+add_executable(emulator src/main.cpp)
+target_link_libraries(emulator PRIVATE emulator-lib)
 
 # Enable testing
 enable_testing()
 
-# Add Google Test
-set(GTEST_DIR "${CMAKE_SOURCE_DIR}/third_party/googletest")
-add_subdirectory(${GTEST_DIR})
+# Add GoogleTest (if using git submodule)
+add_subdirectory(third_party/googletest)  # Change path as needed
 
-# Add test executable
-add_executable(tests tests/test_cpu.cpp src/cpu.cpp)
-target_link_libraries(tests PRIVATE gtest gtest_main)
-target_include_directories(tests PRIVATE ${GTEST_DIR}/include src)
+# Add the test executable
+add_executable(runTests tests/test_cpu.cpp tests/test_memory.cpp)
+target_link_libraries(runTests PRIVATE emulator-lib gtest_main)
 
-# Ensure pthread is linked on Linux
-if (UNIX AND NOT APPLE)
-    target_link_libraries(tests PRIVATE pthread)
-endif()
-
-# Register tests
-add_test(NAME EmulatorTests COMMAND tests)
+# Register tests (makes them visible in VS Code)
+include(GoogleTest)
+gtest_discover_tests(runTests)

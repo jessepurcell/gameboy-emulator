@@ -1,43 +1,71 @@
-#ifndef CPU_HPP
-#define CPU_HPP
+#pragma once
 
-#include <cstdint>
-#include <bitset>
+#include "memory.hpp"
+
 #include <array>
-#include <expected>
-#include <string>
+#include <cstdint>
+#include <functional>
 
-class CPU {
+class CPU
+{
 public:
-    CPU();
-    void reset();
-    
-    // Executes next instruction, returns success or error message
-    std::expected<bool, std::string> executeNextInstruction();
+    CPU(Memory &memory);
+    void executeOpcode();
 
-    // Registers (16-bit pairs)
-    enum Reg16 { AF, BC, DE, HL, COUNT };
-    std::array<uint16_t, COUNT> registers{};
-    
-    // Stack Pointer and Program Counter (separate from general-purpose registers)
-    uint16_t SP = 0;
-    uint16_t PC = 0;
+    // Registers
+    uint8_t registers[8] = {0};
+    uint8_t &A = registers[0];
+    uint8_t &B = registers[1];
+    uint8_t &C = registers[2];
+    uint8_t &D = registers[3];
+    uint8_t &E = registers[4];
+    uint8_t &H = registers[5];
+    uint8_t &L = registers[6];
+    uint8_t &F = registers[7];
 
-    // Memory Access (via MMU, to be implemented elsewhere)
-    uint8_t readByte(uint16_t address);
-    void writeByte(uint16_t address, uint8_t value);
+    uint16_t SP = 0, PC = 0;
+    uint16_t BC() const { return (B << 8) | C; }
+    uint16_t DE() const { return (D << 8) | E; }
+    uint16_t HL() const { return (H << 8) | L; }
 
-    // Flags using std::bitset for clarity
-    std::bitset<8> flags;
-    enum FlagBit { ZF = 7, NF = 6, HF = 5, CF = 4 }; // Zero, Subtract, Half-Carry, Carry
+    void setBC(uint16_t value)
+    {
+        B = value >> 8;
+        C = value & 0xFF;
+    }
 
-    // Flag Manipulation Functions
-    bool getFlag(FlagBit flag) const { return flags.test(flag); }
-    void setFlag(FlagBit flag, bool value) { flags.set(flag, value); }
-    void clearFlags() { flags.reset(); } // Utility function
+    void setDE(uint16_t value)
+    {
+        D = value >> 8;
+        E = value & 0xFF;
+    }
+
+    void setHL(uint16_t value)
+    {
+        H = value >> 8;
+        L = value & 0xFF;
+    }
+
+    // Fetching and execution helpers
+    uint8_t fetchByte();
+    uint16_t fetchWord();
+    void updateFlags();
 
 private:
-    void executeInstruction(uint8_t opcode);
-};
+    Memory &memory;
+    // Lookup tables for opcodes
+    std::array<std::function<void()>, 256> opcodeTable{};
 
-#endif // CPU_HPP
+    // Instruction handlers
+    void NOP();
+    void LD_BC_nn();
+    void ADD_A_B();
+    void RLC_B();
+
+    // Load Instructions
+    void LD_r8_r8(uint8_t &destinationRegister, uint8_t sourceRegister);
+    void LD_r8_n8(uint8_t &destinationRegister);
+    void LD_r8_HL(uint8_t &destinationRegister);
+    // void LD_r16_n16(uint16_t &destination);
+    // void LD_r16_A(uint16_t& dest);
+};
