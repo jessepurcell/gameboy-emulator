@@ -286,3 +286,98 @@ TEST_F(CPUTest, LoadB_A) {
     EXPECT_EQ(cpu.B, 0x34);
     EXPECT_EQ(cpu.PC, 1);
 }
+// ✅ **Test: LOAD (HL), B (0x70 opcode)**
+TEST_F(CPUTest, LoadHL_B) {
+    cpu.H = 0x12;
+    cpu.L = 0x34;
+    cpu.B = 0x56;
+    memory.writeByte(0x0000, 0x70); // LD (HL), B
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x70
+
+    EXPECT_EQ(memory.readByte(0x1234), 0x56);
+    EXPECT_EQ(cpu.PC, 1);
+}
+
+// ✅ **Test: LOAD (HL), C (0x71 opcode)**
+TEST_F(CPUTest, LoadHL_C) {
+    cpu.H = 0x12;
+    cpu.L = 0x34;
+    cpu.C = 0x56;
+    memory.writeByte(0x0000, 0x71); // LD (HL), C
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x71
+
+    EXPECT_EQ(memory.readByte(0x1234), 0x56);
+    EXPECT_EQ(cpu.PC, 1);
+}
+
+// ✅ **Test: LOAD (HL), D (0x72 opcode)**
+TEST_F(CPUTest, LoadHL_D) {
+    cpu.H = 0x12;
+    cpu.L = 0x34;
+    cpu.D = 0x56;
+    memory.writeByte(0x0000, 0x72); // LD (HL), D
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x72
+
+    EXPECT_EQ(memory.readByte(0x1234), 0x56);
+    EXPECT_EQ(cpu.PC, 1);
+}
+
+// ✅ **Test: LOAD (HL), E (0x73 opcode)**
+TEST_F(CPUTest, LoadHL_E) {
+    cpu.H = 0x12;
+    cpu.L = 0x34;
+    cpu.E = 0x56;
+    memory.writeByte(0x0000, 0x73); // LD (HL), E
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x73
+
+    EXPECT_EQ(memory.readByte(0x1234), 0x56);
+    EXPECT_EQ(cpu.PC, 1);
+}
+
+// ✅ **Test: LOAD (HL), H (0x74 opcode)**
+TEST_F(CPUTest, LoadHL_H) {
+    cpu.H = 0x12;
+    cpu.L = 0x34;
+    memory.writeByte(0x0000, 0x74); // LD (HL), H
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x74
+
+    EXPECT_EQ(memory.readByte(0x1234), 0x12);
+    EXPECT_EQ(cpu.PC, 1);
+}
+
+// ✅ **Test: LOAD (HL), L (0x75 opcode)**
+TEST_F(CPUTest, LoadHL_L) {
+    cpu.H = 0x12;
+    cpu.L = 0x34;
+    memory.writeByte(0x0000, 0x75); // LD (HL), L
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x75
+
+    EXPECT_EQ(memory.readByte(0x1234), 0x34);
+    EXPECT_EQ(cpu.PC, 1);
+}
+
+// ✅ **Test: LOAD (HL), A (0x77 opcode)**
+TEST_F(CPUTest, LoadHL_A) {
+    cpu.H = 0x12;
+    cpu.L = 0x34;
+    cpu.A = 0x56;
+    memory.writeByte(0x0000, 0x77); // LD (HL), A
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x77
+
+    EXPECT_EQ(memory.readByte(0x1234), 0x56);
+    EXPECT_EQ(cpu.PC, 1);
+}
