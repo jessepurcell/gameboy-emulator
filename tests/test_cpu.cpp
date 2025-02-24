@@ -62,21 +62,6 @@ TEST_F(CPUTest, FetchWord) {
     EXPECT_EQ(cpu.PC, 0x1002);
 }
 
-// ✅ **Test: LD BC, nn (0x01 opcode)**
-TEST_F(CPUTest, LoadBCImmediate) {
-    memory.writeByte(0x0000, 0x01); // LD BC, 0x1234
-    memory.writeByte(0x0001, 0x34);
-    memory.writeByte(0x0002, 0x12);
-    cpu.PC = 0;
-
-    cpu.executeOpcode(); // Execute opcode 0x01
-
-    EXPECT_EQ(cpu.B, 0x12);
-    EXPECT_EQ(cpu.C, 0x34);
-    EXPECT_EQ(cpu.BC(), 0x1234);
-    EXPECT_EQ(cpu.PC, 3);
-}
-
 // ✅ **Test: LOAD A, B (0x78 opcode)**
 TEST_F(CPUTest, LoadA_B) {
     cpu.A = 0x12;
@@ -285,102 +270,8 @@ TEST_F(CPUTest, LoadB_A) {
 
     EXPECT_EQ(cpu.B, 0x34);
     EXPECT_EQ(cpu.PC, 1);
-}
-// ✅ **Test: LOAD (HL), B (0x70 opcode)**
-TEST_F(CPUTest, LoadHL_B) {
-    cpu.H = 0x12;
-    cpu.L = 0x34;
-    cpu.B = 0x56;
-    memory.writeByte(0x0000, 0x70); // LD (HL), B
-    cpu.PC = 0;
+} 
 
-    cpu.executeOpcode(); // Execute opcode 0x70
-
-    EXPECT_EQ(memory.readByte(0x1234), 0x56);
-    EXPECT_EQ(cpu.PC, 1);
-}
-
-// ✅ **Test: LOAD (HL), C (0x71 opcode)**
-TEST_F(CPUTest, LoadHL_C) {
-    cpu.H = 0x12;
-    cpu.L = 0x34;
-    cpu.C = 0x56;
-    memory.writeByte(0x0000, 0x71); // LD (HL), C
-    cpu.PC = 0;
-
-    cpu.executeOpcode(); // Execute opcode 0x71
-
-    EXPECT_EQ(memory.readByte(0x1234), 0x56);
-    EXPECT_EQ(cpu.PC, 1);
-}
-
-// ✅ **Test: LOAD (HL), D (0x72 opcode)**
-TEST_F(CPUTest, LoadHL_D) {
-    cpu.H = 0x12;
-    cpu.L = 0x34;
-    cpu.D = 0x56;
-    memory.writeByte(0x0000, 0x72); // LD (HL), D
-    cpu.PC = 0;
-
-    cpu.executeOpcode(); // Execute opcode 0x72
-
-    EXPECT_EQ(memory.readByte(0x1234), 0x56);
-    EXPECT_EQ(cpu.PC, 1);
-}
-
-// ✅ **Test: LOAD (HL), E (0x73 opcode)**
-TEST_F(CPUTest, LoadHL_E) {
-    cpu.H = 0x12;
-    cpu.L = 0x34;
-    cpu.E = 0x56;
-    memory.writeByte(0x0000, 0x73); // LD (HL), E
-    cpu.PC = 0;
-
-    cpu.executeOpcode(); // Execute opcode 0x73
-
-    EXPECT_EQ(memory.readByte(0x1234), 0x56);
-    EXPECT_EQ(cpu.PC, 1);
-}
-
-// ✅ **Test: LOAD (HL), H (0x74 opcode)**
-TEST_F(CPUTest, LoadHL_H) {
-    cpu.H = 0x12;
-    cpu.L = 0x34;
-    memory.writeByte(0x0000, 0x74); // LD (HL), H
-    cpu.PC = 0;
-
-    cpu.executeOpcode(); // Execute opcode 0x74
-
-    EXPECT_EQ(memory.readByte(0x1234), 0x12);
-    EXPECT_EQ(cpu.PC, 1);
-}
-
-// ✅ **Test: LOAD (HL), L (0x75 opcode)**
-TEST_F(CPUTest, LoadHL_L) {
-    cpu.H = 0x12;
-    cpu.L = 0x34;
-    memory.writeByte(0x0000, 0x75); // LD (HL), L
-    cpu.PC = 0;
-
-    cpu.executeOpcode(); // Execute opcode 0x75
-
-    EXPECT_EQ(memory.readByte(0x1234), 0x34);
-    EXPECT_EQ(cpu.PC, 1);
-}
-
-// ✅ **Test: LOAD (HL), A (0x77 opcode)**
-TEST_F(CPUTest, LoadHL_A) {
-    cpu.H = 0x12;
-    cpu.L = 0x34;
-    cpu.A = 0x56;
-    memory.writeByte(0x0000, 0x77); // LD (HL), A
-    cpu.PC = 0;
-
-    cpu.executeOpcode(); // Execute opcode 0x77
-
-    EXPECT_EQ(memory.readByte(0x1234), 0x56);
-    EXPECT_EQ(cpu.PC, 1);
-}
 // ✅ **Test: LOAD C, B (0x48 opcode)**
 TEST_F(CPUTest, LoadC_B) {
     cpu.C = 0x12;
@@ -901,5 +792,284 @@ TEST_F(CPUTest, LoadL_A) {
     cpu.executeOpcode(); // Execute opcode 0x6F
 
     EXPECT_EQ(cpu.L, 0x34);
+    EXPECT_EQ(cpu.PC, 1);
+}
+// ✅ **Test: LOAD B, n (0x06 opcode)**
+TEST_F(CPUTest, LoadB_n) {
+    memory.writeByte(0x0000, 0x06); // LD B, n
+    memory.writeByte(0x0001, 0x34); // Immediate value
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x06
+
+    EXPECT_EQ(cpu.B, 0x34);
+    EXPECT_EQ(cpu.PC, 2);
+}
+
+// ✅ **Test: LOAD C, n (0x0E opcode)**
+TEST_F(CPUTest, LoadC_n) {
+    memory.writeByte(0x0000, 0x0E); // LD C, n
+    memory.writeByte(0x0001, 0x34); // Immediate value
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x0E
+
+    EXPECT_EQ(cpu.C, 0x34);
+    EXPECT_EQ(cpu.PC, 2);
+}
+
+// ✅ **Test: LOAD D, n (0x16 opcode)**
+TEST_F(CPUTest, LoadD_n) {
+    memory.writeByte(0x0000, 0x16); // LD D, n
+    memory.writeByte(0x0001, 0x34); // Immediate value
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x16
+
+    EXPECT_EQ(cpu.D, 0x34);
+    EXPECT_EQ(cpu.PC, 2);
+}
+
+// ✅ **Test: LOAD E, n (0x1E opcode)**
+TEST_F(CPUTest, LoadE_n) {
+    memory.writeByte(0x0000, 0x1E); // LD E, n
+    memory.writeByte(0x0001, 0x34); // Immediate value
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x1E
+
+    EXPECT_EQ(cpu.E, 0x34);
+    EXPECT_EQ(cpu.PC, 2);
+}
+
+// ✅ **Test: LOAD H, n (0x26 opcode)**
+TEST_F(CPUTest, LoadH_n) {
+    memory.writeByte(0x0000, 0x26); // LD H, n
+    memory.writeByte(0x0001, 0x34); // Immediate value
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x26
+
+    EXPECT_EQ(cpu.H, 0x34);
+    EXPECT_EQ(cpu.PC, 2);
+}
+
+// ✅ **Test: LOAD L, n (0x2E opcode)**
+TEST_F(CPUTest, LoadL_n) {
+    memory.writeByte(0x0000, 0x2E); // LD L, n
+    memory.writeByte(0x0001, 0x34); // Immediate value
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x2E
+
+    EXPECT_EQ(cpu.L, 0x34);
+    EXPECT_EQ(cpu.PC, 2);
+}
+
+// ✅ **Test: LOAD A, n (0x3E opcode)**
+TEST_F(CPUTest, LoadA_n) {
+    memory.writeByte(0x0000, 0x3E); // LD A, n
+    memory.writeByte(0x0001, 0x34); // Immediate value
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x3E
+
+    EXPECT_EQ(cpu.A, 0x34);
+    EXPECT_EQ(cpu.PC, 2);
+}
+// ✅ **Test: LOAD BC, nn (0x01 opcode)**
+TEST_F(CPUTest, LoadBCImmediate) {
+    memory.writeByte(0x0000, 0x01); // LD BC, 0x1234
+    memory.writeByte(0x0001, 0x34);
+    memory.writeByte(0x0002, 0x12);
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x01
+
+    EXPECT_EQ(cpu.B, 0x12);
+    EXPECT_EQ(cpu.C, 0x34);
+    EXPECT_EQ(cpu.BC(), 0x1234);
+    EXPECT_EQ(cpu.PC, 3);
+}
+
+// ✅ **Test: LOAD DE, nn (0x11 opcode)**
+TEST_F(CPUTest, LoadDEImmediate) {
+    memory.writeByte(0x0000, 0x11); // LD DE, 0x5678
+    memory.writeByte(0x0001, 0x78);
+    memory.writeByte(0x0002, 0x56);
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x11
+
+    EXPECT_EQ(cpu.D, 0x56);
+    EXPECT_EQ(cpu.E, 0x78);
+    EXPECT_EQ(cpu.DE(), 0x5678);
+    EXPECT_EQ(cpu.PC, 3);
+}
+
+// ✅ **Test: LOAD HL, nn (0x21 opcode)**
+TEST_F(CPUTest, LoadHLImmediate) {
+    memory.writeByte(0x0000, 0x21); // LD HL, 0x9ABC
+    memory.writeByte(0x0001, 0xBC);
+    memory.writeByte(0x0002, 0x9A);
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x21
+
+    EXPECT_EQ(cpu.H, 0x9A);
+    EXPECT_EQ(cpu.L, 0xBC);
+    EXPECT_EQ(cpu.HL(), 0x9ABC);
+    EXPECT_EQ(cpu.PC, 3);
+}
+
+// ✅ **Test: LOAD SP, nn (0x31 opcode)**
+TEST_F(CPUTest, LoadSPImmediate) {
+    memory.writeByte(0x0000, 0x31); // LD SP, 0xDEF0
+    memory.writeByte(0x0001, 0xF0);
+    memory.writeByte(0x0002, 0xDE);
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x31
+
+    EXPECT_EQ(cpu.SP, 0xDEF0);
+    EXPECT_EQ(cpu.PC, 3);
+}
+// ✅ **Test: LOAD (HL), B (0x70 opcode)**
+TEST_F(CPUTest, LoadHL_B) {
+    cpu.H = 0x12;
+    cpu.L = 0x34;
+    cpu.B = 0x56;
+    memory.writeByte(0x0000, 0x70); // LD (HL), B
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x70
+
+    EXPECT_EQ(memory.readByte(0x1234), 0x56);
+    EXPECT_EQ(cpu.PC, 1);
+}
+
+// ✅ **Test: LOAD (HL), C (0x71 opcode)**
+TEST_F(CPUTest, LoadHL_C) {
+    cpu.H = 0x12;
+    cpu.L = 0x34;
+    cpu.C = 0x56;
+    memory.writeByte(0x0000, 0x71); // LD (HL), C
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x71
+
+    EXPECT_EQ(memory.readByte(0x1234), 0x56);
+    EXPECT_EQ(cpu.PC, 1);
+}
+
+// ✅ **Test: LOAD (HL), D (0x72 opcode)**
+TEST_F(CPUTest, LoadHL_D) {
+    cpu.H = 0x12;
+    cpu.L = 0x34;
+    cpu.D = 0x56;
+    memory.writeByte(0x0000, 0x72); // LD (HL), D
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x72
+
+    EXPECT_EQ(memory.readByte(0x1234), 0x56);
+    EXPECT_EQ(cpu.PC, 1);
+}
+
+// ✅ **Test: LOAD (HL), E (0x73 opcode)**
+TEST_F(CPUTest, LoadHL_E) {
+    cpu.H = 0x12;
+    cpu.L = 0x34;
+    cpu.E = 0x56;
+    memory.writeByte(0x0000, 0x73); // LD (HL), E
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x73
+
+    EXPECT_EQ(memory.readByte(0x1234), 0x56);
+    EXPECT_EQ(cpu.PC, 1);
+}
+
+// ✅ **Test: LOAD (HL), H (0x74 opcode)**
+TEST_F(CPUTest, LoadHL_H) {
+    cpu.H = 0x12;
+    cpu.L = 0x34;
+    memory.writeByte(0x0000, 0x74); // LD (HL), H
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x74
+
+    EXPECT_EQ(memory.readByte(0x1234), 0x12);
+    EXPECT_EQ(cpu.PC, 1);
+}
+
+// ✅ **Test: LOAD (HL), L (0x75 opcode)**
+TEST_F(CPUTest, LoadHL_L) {
+    cpu.H = 0x12;
+    cpu.L = 0x34;
+    memory.writeByte(0x0000, 0x75); // LD (HL), L
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x75
+
+    EXPECT_EQ(memory.readByte(0x1234), 0x34);
+    EXPECT_EQ(cpu.PC, 1);
+}
+
+// ✅ **Test: LOAD (HL), A (0x77 opcode)**
+TEST_F(CPUTest, LoadHL_A) {
+    cpu.H = 0x12;
+    cpu.L = 0x34;
+    cpu.A = 0x56;
+    memory.writeByte(0x0000, 0x77); // LD (HL), A
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x77
+
+    EXPECT_EQ(memory.readByte(0x1234), 0x56);
+    EXPECT_EQ(cpu.PC, 1);
+}
+
+// ✅ **Test: LOAD (HL), n (0x36 opcode)**
+TEST_F(CPUTest, LoadHL_n) {
+    cpu.H = 0x12;
+    cpu.L = 0x34;
+    memory.writeByte(0x0000, 0x36); // LD (HL), n
+    memory.writeByte(0x0001, 0x56); // Immediate value
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x36
+
+    EXPECT_EQ(memory.readByte(0x1234), 0x56);
+    EXPECT_EQ(cpu.PC, 2);
+}
+
+// ✅ **Test: LOAD A, (BC) (0x0A opcode)**
+TEST_F(CPUTest, LoadA_BC) {
+    cpu.A = 0x0;
+    cpu.B = 0x12;
+    cpu.C = 0x34;
+    memory.writeByte(0x1234, 0x56); // Value at address BC
+    memory.writeByte(0x0000, 0x0A); // LD A, (BC)
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x0A
+
+    EXPECT_EQ(cpu.A, 0x56);
+    EXPECT_EQ(cpu.PC, 1);
+}
+
+// ✅ **Test: LOAD A, (DE) (0x1A opcode)**
+TEST_F(CPUTest, LoadA_DE) {
+    cpu.A = 0x0;
+    cpu.D = 0x12;
+    cpu.E = 0x34;
+    memory.writeByte(0x1234, 0x56); // Value at address DE
+    memory.writeByte(0x0000, 0x1A); // LD A, (DE)
+    cpu.PC = 0;
+
+    cpu.executeOpcode(); // Execute opcode 0x1A
+
+    EXPECT_EQ(cpu.A, 0x56);
     EXPECT_EQ(cpu.PC, 1);
 }
