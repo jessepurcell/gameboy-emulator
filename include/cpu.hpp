@@ -66,6 +66,7 @@ private:
     void LD_r8_r8(uint8_t &destinationRegister, uint8_t sourceRegister);
     void LD_r8_n8(uint8_t &destinationRegister);
     void LD_r8_HL(uint8_t &destinationRegister);
+    void LD_HL_r8(uint8_t sourceRegister);
     // void LD_r16_n16(uint16_t &destination);
     // void LD_r16_A(uint16_t& dest);
 };

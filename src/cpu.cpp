@@ -67,6 +67,15 @@ CPU::CPU(Memory &memory)
     opcodeTable[0x6E] = std::bind(&CPU::LD_r8_HL, this, std::ref(L));
     opcodeTable[0x6F] = std::bind(&CPU::LD_r8_r8, this, std::ref(L), std::ref(A));
 
+    opcodeTable[0x70] = std::bind(&CPU::LD_HL_r8, this, std::ref(B));
+    opcodeTable[0x71] = std::bind(&CPU::LD_HL_r8, this, std::ref(C));
+    opcodeTable[0x72] = std::bind(&CPU::LD_HL_r8, this, std::ref(D));
+    opcodeTable[0x73] = std::bind(&CPU::LD_HL_r8, this, std::ref(E));
+    opcodeTable[0x74] = std::bind(&CPU::LD_HL_r8, this, std::ref(H));
+    opcodeTable[0x75] = std::bind(&CPU::LD_HL_r8, this, std::ref(L));
+    opcodeTable[0x76] = std::bind(&CPU::NOP, this); //ToDo: Implement HALT
+    opcodeTable[0x77] = std::bind(&CPU::LD_HL_r8, this, std::ref(A));
+
     opcodeTable[0x78] = std::bind(&CPU::LD_r8_r8, this, std::ref(A), std::ref(B));
     opcodeTable[0x79] = std::bind(&CPU::LD_r8_r8, this, std::ref(A), std::ref(C));
     opcodeTable[0x7A] = std::bind(&CPU::LD_r8_r8, this, std::ref(A), std::ref(D));
@@ -121,12 +130,17 @@ void CPU::updateFlags()
     // TODO: Implement flag updates
 }
 
-void CPU::LD_r8_r8(uint8_t &dest, uint8_t src)
+void CPU::LD_r8_r8(uint8_t &destinationRegister, uint8_t sourceRegister)
 {
-    dest = src;
+    destinationRegister = sourceRegister;
 }
 
 void CPU::LD_r8_HL(uint8_t &dest)
 {
     dest = memory.readByte(HL());
+}
+
+void CPU::LD_HL_r8(uint8_t src)
+{
+    memory.writeByte(HL(), src);
 }
