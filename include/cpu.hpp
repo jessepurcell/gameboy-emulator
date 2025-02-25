@@ -75,10 +75,10 @@ private:
     void NOP();
 
     // Load Instructions
-    void LD_r16_n16(uint16_t &registerPair);
-    void LD_r16_A(uint16_t &registerPair);
-    void LD_A_r16(uint16_t &registerPair);
-    void LD_n16_SP();
+    void LD_r16_n16(uint16_t &registerPair);//
+    void LD_r16_A(uint16_t &registerPair);//
+    void LD_A_r16(uint16_t &registerPair);//
+    void LD_n16_SP();//
 
     void INC_r16(uint16_t &registerPair);
     void DEC_r16(uint16_t &registerPair);
