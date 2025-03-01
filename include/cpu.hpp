@@ -62,6 +62,8 @@ class CPU {
   uint16_t DE_register = 0;
   uint16_t HL_register = 0;
 
+  uint8_t getCarryFlag() { return F & 0x10; }
+
   void setCarryFlag(bool value) {
     if (value) {
       F |= 0x10;
@@ -69,6 +71,8 @@ class CPU {
       F &= ~0x10;
     }
   }
+
+  uint8_t getHalfCarryFlag() { return F & 0x20; }
 
   void setHalfCarryFlag(bool value) {
     if (value) {
@@ -78,6 +82,8 @@ class CPU {
     }
   }
 
+  uint8_t getSubtractFlag() { return F & 0x40; }
+
   void setSubtractFlag(bool value) {
     if (value) {
       F |= 0x40;
@@ -85,6 +91,8 @@ class CPU {
       F &= ~0x40;
     }
   }
+
+  uint8_t getZeroFlag() { return F & 0x80; }
 
   void setZeroFlag(bool value) {
     if (value) {
@@ -104,14 +112,14 @@ class CPU {
   void NOP();
 
   // Load Instructions
-  void LD_r16_n16(uint16_t &registerPair);
-  void LD_r16_A(uint16_t &registerPair);
-  void LD_A_r16(uint16_t &registerPair);
-  void LD_n16_SP();
+  void LD_r16_n16(uint16_t &registerPair);  //
+  void LD_r16_A(uint16_t &registerPair);    //
+  void LD_A_r16(uint16_t &registerPair);    //
+  void LD_n16_SP();                         //
 
-  void INC_r16(uint16_t &registerPair);
-  void DEC_r16(uint16_t &registerPair);
-  void ADD_HL_r16(uint16_t &registerPair);
+  void INC_r16(uint16_t &registerPair);     //
+  void DEC_r16(uint16_t &registerPair);     //
+  void ADD_HL_r16(uint16_t &registerPair);  //
 
   void INC_r8(uint8_t &registerPair);
   void DEC_r8(uint8_t &registerPair);

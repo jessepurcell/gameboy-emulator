@@ -500,3 +500,296 @@ TEST_F(CPUTest, AddHL_BC_WithCarry) {
   EXPECT_EQ(cpu.F & 0x10, 0x10);  // Check carry flag
   EXPECT_EQ(cpu.F & 0x20, 0x20);  // Check half-carry flag
 }
+// ✅ **Test: ADD A, B (0x80 opcode)**
+TEST_F(CPUTest, AddA_B) {
+  cpu.A = 0x12;
+  cpu.B = 0x34;
+  memory.writeByte(0x0000, 0x80);  // ADD A, B
+  cpu.PC = 0;
+
+  cpu.executeOpcode();  // Execute opcode 0x80
+
+  EXPECT_EQ(cpu.A, 0x46);
+  EXPECT_EQ(cpu.PC, 1);
+  // Check flags
+  EXPECT_EQ(cpu.F & 0x80, 0);  // Check zero flag
+  EXPECT_EQ(cpu.F & 0x40, 0);  // Check subtract flag
+  EXPECT_EQ(cpu.F & 0x20, 0);  // Check half-carry flag
+  EXPECT_EQ(cpu.F & 0x10, 0);  // Check carry flag
+}
+
+// ✅ **Test: ADD A, C (0x81 opcode)**
+TEST_F(CPUTest, AddA_C) {
+  cpu.A = 0x12;
+  cpu.C = 0x34;
+  memory.writeByte(0x0000, 0x81);  // ADD A, C
+  cpu.PC = 0;
+
+  cpu.executeOpcode();  // Execute opcode 0x81
+
+  EXPECT_EQ(cpu.A, 0x46);
+  EXPECT_EQ(cpu.PC, 1);
+  // Check flags
+  EXPECT_EQ(cpu.F & 0x80, 0);  // Check zero flag
+  EXPECT_EQ(cpu.F & 0x40, 0);  // Check subtract flag
+  EXPECT_EQ(cpu.F & 0x20, 0);  // Check half-carry flag
+  EXPECT_EQ(cpu.F & 0x10, 0);  // Check carry flag
+}
+
+// ✅ **Test: ADD A, D (0x82 opcode)**
+TEST_F(CPUTest, AddA_D) {
+  cpu.A = 0x12;
+  cpu.D = 0x34;
+  memory.writeByte(0x0000, 0x82);  // ADD A, D
+  cpu.PC = 0;
+
+  cpu.executeOpcode();  // Execute opcode 0x82
+
+  EXPECT_EQ(cpu.A, 0x46);
+  EXPECT_EQ(cpu.PC, 1);
+  // Check flags
+  EXPECT_EQ(cpu.F & 0x80, 0);  // Check zero flag
+  EXPECT_EQ(cpu.F & 0x40, 0);  // Check subtract flag
+  EXPECT_EQ(cpu.F & 0x20, 0);  // Check half-carry flag
+  EXPECT_EQ(cpu.F & 0x10, 0);  // Check carry flag
+}
+
+// ✅ **Test: ADD A, E (0x83 opcode)**
+TEST_F(CPUTest, AddA_E) {
+  cpu.A = 0x12;
+  cpu.E = 0x34;
+  memory.writeByte(0x0000, 0x83);  // ADD A, E
+  cpu.PC = 0;
+
+  cpu.executeOpcode();  // Execute opcode 0x83
+
+  EXPECT_EQ(cpu.A, 0x46);
+  EXPECT_EQ(cpu.PC, 1);
+  // Check flags
+  EXPECT_EQ(cpu.F & 0x80, 0);  // Check zero flag
+  EXPECT_EQ(cpu.F & 0x40, 0);  // Check subtract flag
+  EXPECT_EQ(cpu.F & 0x20, 0);  // Check half-carry flag
+  EXPECT_EQ(cpu.F & 0x10, 0);  // Check carry flag
+}
+
+// ✅ **Test: ADD A, H (0x84 opcode)**
+TEST_F(CPUTest, AddA_H) {
+  cpu.A = 0x12;
+  cpu.H = 0x34;
+  memory.writeByte(0x0000, 0x84);  // ADD A, H
+  cpu.PC = 0;
+
+  cpu.executeOpcode();  // Execute opcode 0x84
+
+  EXPECT_EQ(cpu.A, 0x46);
+  EXPECT_EQ(cpu.PC, 1);
+  // Check flags
+  EXPECT_EQ(cpu.F & 0x80, 0);  // Check zero flag
+  EXPECT_EQ(cpu.F & 0x40, 0);  // Check subtract flag
+  EXPECT_EQ(cpu.F & 0x20, 0);  // Check half-carry flag
+  EXPECT_EQ(cpu.F & 0x10, 0);  // Check carry flag
+}
+
+// ✅ **Test: ADD A, L (0x85 opcode)**
+TEST_F(CPUTest, AddA_L) {
+  cpu.A = 0x12;
+  cpu.L = 0x34;
+  memory.writeByte(0x0000, 0x85);  // ADD A, L
+  cpu.PC = 0;
+
+  cpu.executeOpcode();  // Execute opcode 0x85
+
+  EXPECT_EQ(cpu.A, 0x46);
+  EXPECT_EQ(cpu.PC, 1);
+  // Check flags
+  EXPECT_EQ(cpu.F & 0x80, 0);  // Check zero flag
+  EXPECT_EQ(cpu.F & 0x40, 0);  // Check subtract flag
+  EXPECT_EQ(cpu.F & 0x20, 0);  // Check half-carry flag
+  EXPECT_EQ(cpu.F & 0x10, 0);  // Check carry flag
+}
+
+// ✅ **Test: ADD A, A (0x87 opcode)**
+TEST_F(CPUTest, AddA_A) {
+  cpu.A = 0x12;
+  memory.writeByte(0x0000, 0x87);  // ADD A, A
+  cpu.PC = 0;
+
+  cpu.executeOpcode();  // Execute opcode 0x87
+
+  EXPECT_EQ(cpu.A, 0x24);
+  EXPECT_EQ(cpu.PC, 1);
+  // Check flags
+  EXPECT_EQ(cpu.F & 0x80, 0);  // Check zero flag
+  EXPECT_EQ(cpu.F & 0x40, 0);  // Check subtract flag
+  EXPECT_EQ(cpu.F & 0x20, 0);  // Check half-carry flag
+  EXPECT_EQ(cpu.F & 0x10, 0);  // Check carry flag
+}
+
+// ✅ **Test: ADD A, n8 (0xC6 opcode)**
+TEST_F(CPUTest, AddA_n8) {
+  cpu.A = 0x12;
+  memory.writeByte(0x0000, 0xC6);  // ADD A, n8
+  memory.writeByte(0x0001, 0x34);  // Value to add to A
+  cpu.PC = 0;
+
+  cpu.executeOpcode();  // Execute opcode 0xC6
+
+  EXPECT_EQ(cpu.A, 0x46);
+  EXPECT_EQ(cpu.PC, 2);
+  // Check flags
+  EXPECT_EQ(cpu.F & 0x80, 0);  // Check zero flag
+  EXPECT_EQ(cpu.F & 0x40, 0);  // Check subtract flag
+  EXPECT_EQ(cpu.F & 0x20, 0);  // Check half-carry flag
+  EXPECT_EQ(cpu.F & 0x10, 0);  // Check carry flag
+}
+
+// ✅ **Test: ADC A, B (0x88 opcode)**
+TEST_F(CPUTest, AdcA_B) {
+  cpu.A = 0x12;
+  cpu.B = 0x34;
+  // cpu.setCarryFlag(true);
+  memory.writeByte(0x0000, 0x88);  // ADC A, B
+  cpu.PC = 0;
+
+  cpu.executeOpcode();  // Execute opcode 0x88
+
+  EXPECT_EQ(cpu.A, 0x47);
+  EXPECT_EQ(cpu.PC, 1);
+  // Check flags
+  EXPECT_EQ(cpu.F & 0x80, 0);  // Check zero flag
+  EXPECT_EQ(cpu.F & 0x40, 0);  // Check subtract flag
+  EXPECT_EQ(cpu.F & 0x20, 0);  // Check half-carry flag
+  EXPECT_EQ(cpu.F & 0x10, 0);  // Check carry flag
+}
+
+// ✅ **Test: ADC A, C (0x89 opcode)**
+TEST_F(CPUTest, AdcA_C) {
+  cpu.A = 0x12;
+  cpu.C = 0x34;
+  // cpu.setCarryFlag(true);
+  memory.writeByte(0x0000, 0x89);  // ADC A, C
+  cpu.PC = 0;
+
+  cpu.executeOpcode();  // Execute opcode 0x89
+
+  EXPECT_EQ(cpu.A, 0x47);
+  EXPECT_EQ(cpu.PC, 1);
+  // Check flags
+  EXPECT_EQ(cpu.F & 0x80, 0);  // Check zero flag
+  EXPECT_EQ(cpu.F & 0x40, 0);  // Check subtract flag
+  EXPECT_EQ(cpu.F & 0x20, 0);  // Check half-carry flag
+  EXPECT_EQ(cpu.F & 0x10, 0);  // Check carry flag
+}
+
+// ✅ **Test: ADC A, D (0x8A opcode)**
+TEST_F(CPUTest, AdcA_D) {
+  cpu.A = 0x12;
+  cpu.D = 0x34;
+  // cpu.setCarryFlag(true);
+  memory.writeByte(0x0000, 0x8A);  // ADC A, D
+  cpu.PC = 0;
+
+  cpu.executeOpcode();  // Execute opcode 0x8A
+
+  EXPECT_EQ(cpu.A, 0x47);
+  EXPECT_EQ(cpu.PC, 1);
+  // Check flags
+  EXPECT_EQ(cpu.F & 0x80, 0);  // Check zero flag
+  EXPECT_EQ(cpu.F & 0x40, 0);  // Check subtract flag
+  EXPECT_EQ(cpu.F & 0x20, 0);  // Check half-carry flag
+  EXPECT_EQ(cpu.F & 0x10, 0);  // Check carry flag
+}
+
+// ✅ **Test: ADC A, E (0x8B opcode)**
+TEST_F(CPUTest, AdcA_E) {
+  cpu.A = 0x12;
+  cpu.E = 0x34;
+  // cpu.setCarryFlag(true);
+  memory.writeByte(0x0000, 0x8B);  // ADC A, E
+  cpu.PC = 0;
+
+  cpu.executeOpcode();  // Execute opcode 0x8B
+
+  EXPECT_EQ(cpu.A, 0x47);
+  EXPECT_EQ(cpu.PC, 1);
+  // Check flags
+  EXPECT_EQ(cpu.F & 0x80, 0);  // Check zero flag
+  EXPECT_EQ(cpu.F & 0x40, 0);  // Check subtract flag
+  EXPECT_EQ(cpu.F & 0x20, 0);  // Check half-carry flag
+  EXPECT_EQ(cpu.F & 0x10, 0);  // Check carry flag
+}
+
+// ✅ **Test: ADC A, H (0x8C opcode)**
+TEST_F(CPUTest, AdcA_H) {
+  cpu.A = 0x12;
+  cpu.H = 0x34;
+  // cpu.setCarryFlag(true);
+  memory.writeByte(0x0000, 0x8C);  // ADC A, H
+  cpu.PC = 0;
+
+  cpu.executeOpcode();  // Execute opcode 0x8C
+
+  EXPECT_EQ(cpu.A, 0x47);
+  EXPECT_EQ(cpu.PC, 1);
+  // Check flags
+  EXPECT_EQ(cpu.F & 0x80, 0);  // Check zero flag
+  EXPECT_EQ(cpu.F & 0x40, 0);  // Check subtract flag
+  EXPECT_EQ(cpu.F & 0x20, 0);  // Check half-carry flag
+  EXPECT_EQ(cpu.F & 0x10, 0);  // Check carry flag
+}
+
+// ✅ **Test: ADC A, L (0x8D opcode)**
+TEST_F(CPUTest, AdcA_L) {
+  cpu.A = 0x12;
+  cpu.L = 0x34;
+  // cpu.setCarryFlag(true);
+  memory.writeByte(0x0000, 0x8D);  // ADC A, L
+  cpu.PC = 0;
+
+  cpu.executeOpcode();  // Execute opcode 0x8D
+
+  EXPECT_EQ(cpu.A, 0x47);
+  EXPECT_EQ(cpu.PC, 1);
+  // Check flags
+  EXPECT_EQ(cpu.F & 0x80, 0);  // Check zero flag
+  EXPECT_EQ(cpu.F & 0x40, 0);  // Check subtract flag
+  EXPECT_EQ(cpu.F & 0x20, 0);  // Check half-carry flag
+  EXPECT_EQ(cpu.F & 0x10, 0);  // Check carry flag
+}
+
+// ✅ **Test: ADC A, A (0x8F opcode)**
+TEST_F(CPUTest, AdcA_A) {
+  cpu.A = 0x12;
+  // cpu.setCarryFlag(true);
+  memory.writeByte(0x0000, 0x8F);  // ADC A, A
+  cpu.PC = 0;
+
+  cpu.executeOpcode();  // Execute opcode 0x8F
+
+  EXPECT_EQ(cpu.A, 0x25);
+  EXPECT_EQ(cpu.PC, 1);
+  // Check flags
+  EXPECT_EQ(cpu.F & 0x80, 0);  // Check zero flag
+  EXPECT_EQ(cpu.F & 0x40, 0);  // Check subtract flag
+  EXPECT_EQ(cpu.F & 0x20, 0);  // Check half-carry flag
+  EXPECT_EQ(cpu.F & 0x10, 0);  // Check carry flag
+}
+
+// ✅ **Test: ADC A, n8 (0xCE opcode)**
+TEST_F(CPUTest, AdcA_n8) {
+  cpu.A = 0x12;
+  // cpu.setCarryFlag(true);
+  memory.writeByte(0x0000, 0xCE);  // ADC A, n8
+  memory.writeByte(0x0001, 0x34);  // Value to add to A
+  cpu.PC = 0;
+
+  cpu.executeOpcode();  // Execute opcode 0xCE
+
+  EXPECT_EQ(cpu.A, 0x47);
+  EXPECT_EQ(cpu.PC, 2);
+  // Check flags
+  EXPECT_EQ(cpu.F & 0x80, 0);  // Check zero flag
+  EXPECT_EQ(cpu.F & 0x40, 0);  // Check subtract flag
+  EXPECT_EQ(cpu.F & 0x20, 0);  // Check half-carry flag
+  EXPECT_EQ(cpu.F & 0x10, 0);  // Check carry flag
+}

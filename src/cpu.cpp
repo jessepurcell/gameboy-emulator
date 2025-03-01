@@ -327,3 +327,227 @@ void CPU::ADD_HL_r16(uint16_t &registerPair) {
   //   printf("0x%016X\n", F);
   HL() = result & 0xFFFF;
 }
+
+void CPU::INC_r8(uint8_t &registerPair) {
+  bool halfCarry = (registerPair & 0x0F) == 0x0F;
+  registerPair++;
+  setZeroFlag(registerPair == 0);
+  setSubtractFlag(false);
+  setHalfCarryFlag(halfCarry);
+}
+
+void CPU::DEC_r8(uint8_t &registerPair) {
+  bool halfCarry = (registerPair & 0x0F) == 0x00;
+  registerPair--;
+  setZeroFlag(registerPair == 0);
+  setSubtractFlag(true);
+  setHalfCarryFlag(halfCarry);
+}
+
+void CPU::ADD_A_r8(uint8_t value) {
+  bool halfCarry = (A & 0x0F) + (value & 0x0F) > 0x0F;
+  bool carry = A + value > 0xFF;
+
+  resetFlags();
+  setZeroFlag((A + value) == 0);
+  setSubtractFlag(false);
+  setHalfCarryFlag(halfCarry);
+  setCarryFlag(carry);
+
+  A += value;
+}
+
+void CPU::ADD_A_n8() {
+  uint8_t value = fetchByte();
+  ADD_A_r8(value);
+}
+
+void CPU::ADC_A_r8(uint8_t value) {
+  uint8_t carry = getCarryFlag() ? 1 : 0;
+  bool halfCarry = (A & 0x0F) + (value & 0x0F) + carry > 0x0F;
+  bool carryFlag = A + value + carry > 0xFF;
+
+  resetFlags();
+  setZeroFlag((A + value + carry) == 0);
+  setSubtractFlag(false);
+  setHalfCarryFlag(halfCarry);
+  setCarryFlag(carryFlag);
+
+  A += value + carry;
+}
+
+void CPU::ADC_A_n8() {
+  uint8_t value = fetchByte();
+  ADC_A_r8(value);
+}
+
+void CPU::SUB_A_r8(uint8_t value) {
+  bool halfCarry = (A & 0x0F) < (value & 0x0F);
+  bool carry = A < value;
+
+  resetFlags();
+  setZeroFlag(A == value);
+  setSubtractFlag(true);
+  setHalfCarryFlag(halfCarry);
+  setCarryFlag(carry);
+
+  A -= value;
+}
+
+void CPU::SUB_A_n8() {
+  uint8_t value = fetchByte();
+  SUB_A_r8(value);
+}
+
+void CPU::SBC_A_r8(uint8_t value) {
+  uint8_t carry = getCarryFlag() ? 1 : 0;
+  bool halfCarry = (A & 0x0F) < (value & 0x0F) + carry;
+  bool carryFlag = A < value + carry;
+
+  resetFlags();
+  setZeroFlag(A == value + carry);
+  setSubtractFlag(true);
+  setHalfCarryFlag(halfCarry);
+  setCarryFlag(carryFlag);
+
+  A -= value + carry;
+}
+
+void CPU::SBC_A_n8() {
+  uint8_t value = fetchByte();
+  SBC_A_r8(value);
+}
+
+void CPU::AND_A_r8(uint8_t value) {
+  A &= value;
+  resetFlags();
+  setZeroFlag(A == 0);
+  setSubtractFlag(false);
+  setHalfCarryFlag(true);
+  setCarryFlag(false);
+}
+
+void CPU::AND_A_n8() {
+  uint8_t value = fetchByte();
+  AND_A_r8(value);
+}
+
+void CPU::XOR_A_r8(uint8_t value) {
+  A ^= value;
+  resetFlags();
+  setZeroFlag(A == 0);
+}
+
+void CPU::XOR_A_n8() {
+  uint8_t value = fetchByte();
+  XOR_A_r8(value);
+}
+
+void CPU::OR_A_r8(uint8_t value) {
+  A |= value;
+  resetFlags();
+  setZeroFlag(A == 0);
+}
+
+void CPU::OR_A_n8() {
+  uint8_t value = fetchByte();
+  OR_A_r8(value);
+}
+
+void CPU::CP_A_r8(uint8_t value) {
+  uint8_t result = A - value;
+  bool halfCarry = (A & 0x0F) < (value & 0x0F);
+  bool carry = A < value;
+
+  resetFlags();
+  setZeroFlag(result == 0);
+  setSubtractFlag(true);
+  setHalfCarryFlag(halfCarry);
+  setCarryFlag(carry);
+}
+
+void CPU::CP_A_n8() {
+  uint8_t value = fetchByte();
+  CP_A_r8(value);
+}
+
+void CPU::ADD_SP_n8() {
+  int8_t value = fetchByte();
+  bool halfCarry = (SP & 0x0F) + (value & 0x0F) > 0x0F;
+  bool carry = (SP & 0xFF) + value > 0xFF;
+
+  resetFlags();
+  setZeroFlag(false);
+  setSubtractFlag(false);
+  setHalfCarryFlag(halfCarry);
+  setCarryFlag(carry);
+
+  SP += value;
+}
+
+void CPU::LD_HL_SP_n8() {
+  int8_t value = fetchByte();
+  bool halfCarry = (SP & 0x0F) + (value & 0x0F) > 0x0F;
+  bool carry = (SP & 0xFF) + value > 0xFF;
+
+  resetFlags();
+  setZeroFlag(false);
+  setSubtractFlag(false);
+  setHalfCarryFlag(halfCarry);
+  setCarryFlag(carry);
+
+  HL() = SP + value;
+}
+
+void CPU::JP_n16() { PC = fetchWord(); }
+
+void CPU::JP_HL() { PC = HL(); }
+
+void CPU::CALL_n16() {
+  uint16_t address = fetchWord();
+  memory.writeWord(--SP, PC);
+  PC = address;
+}
+
+void CPU::RET() { PC = memory.readWord(SP++); }
+
+void CPU::RETI() {
+  PC = memory.readWord(SP++);
+  EI();
+}
+
+void CPU::PUSH_r16(uint16_t &registerPair) {
+  memory.writeWord(--SP, registerPair);
+}
+
+void CPU::POP_r16(uint16_t &registerPair) {
+  registerPair = memory.readWord(SP++);
+}
+
+void CPU::LDH_n8_A() {
+  uint8_t address = fetchByte();
+  memory.writeByte(0xFF00 + address, A);
+}
+
+void CPU::LDH_A_n8() {
+  uint8_t address = fetchByte();
+  A = memory.readByte(0xFF00 + address);
+}
+
+void CPU::LD_n16_A() {
+  uint16_t address = fetchWord();
+  memory.writeByte(address, A);
+}
+
+void CPU::LD_A_n16() {
+  uint16_t address = fetchWord();
+  A = memory.readByte(address);
+}
+
+void CPU::LD_SP_HL() { SP = HL(); }
+
+void CPU::DI() {  // IME = false;
+}
+
+void CPU::EI() {  // IME = true;
+}
