@@ -290,8 +290,102 @@ TEST_F(CPUTest, CALL_n16) {
 
   cpu.executeOpcode();
 
+  EXPECT_EQ(cpu.PC, 0x1234);  // PC should jump to 0x1234
+  EXPECT_EQ(memory.readWord(0xFFFC),
+            0x0003);          // Return address should be stored at 0xFFFC
+  EXPECT_EQ(cpu.SP, 0xFFFC);  // SP should decrement by 2
+}
+
+// ✅ **Test: ADD_SP_n8**
+TEST_F(CPUTest, ADD_SP_n8) {
+  cpu.SP = 0xFFF0;
+  memory.writeByte(0x0000, 0xE8);  // ADD SP, 0x10
+  memory.writeByte(0x0001, 0x10);
+  cpu.PC = 0;
+
+  cpu.executeOpcode();
+
+  EXPECT_EQ(cpu.SP, 0x0000);
+  EXPECT_EQ(cpu.PC, 2);
+}
+
+// ✅ **Test: LD_HL_SP_n8**
+TEST_F(CPUTest, LD_HL_SP_n8) {
+  cpu.SP = 0xFFF0;
+  memory.writeByte(0x0000, 0xF8);  // LD HL, SP+0x10
+  memory.writeByte(0x0001, 0x10);
+  cpu.PC = 0;
+
+  cpu.executeOpcode();
+
+  EXPECT_EQ(cpu.HL(), 0x0000);
+  EXPECT_EQ(cpu.PC, 2);
+}
+
+// ✅ **Test: JR_con_n8**
+TEST_F(CPUTest, JR_con_n8) {
+  memory.writeByte(0x0000, 0x28);  // JR Z, 0x02
+  memory.writeByte(0x0001, 0x02);
+  cpu.PC = 0;
+  cpu.setZeroFlag(true);
+
+  cpu.executeOpcode();
+
+  EXPECT_EQ(cpu.PC, 0x0004);
+}
+
+// ✅ **Test: RET_con**
+TEST_F(CPUTest, RET_con) {
+  memory.writeWord(0xFFFE, 0x1234);
+  memory.writeByte(0x0000, 0xC0);  // RET NZ
+  cpu.PC = 0;
+  cpu.SP = 0xFFFE;
+  cpu.setZeroFlag(false);
+
+  cpu.executeOpcode();
+
   EXPECT_EQ(cpu.PC, 0x1234);
-  EXPECT_EQ(cpu.SP, 0x0003);
+  EXPECT_EQ(cpu.SP, 0xFFFF);
+}
+
+// ✅ **Test: JP_con_n16**
+TEST_F(CPUTest, JP_con_n16) {
+  memory.writeByte(0x0000, 0xC2);  // JP NZ, 0x1234
+  memory.writeByte(0x0001, 0x34);
+  memory.writeByte(0x0002, 0x12);
+  cpu.PC = 0;
+  cpu.setZeroFlag(false);
+
+  cpu.executeOpcode();
+
+  EXPECT_EQ(cpu.PC, 0x1234);
+}
+
+// ✅ **Test: CALL_con_n16**
+TEST_F(CPUTest, CALL_con_n16) {
+  memory.writeByte(0x0000, 0xC4);  // CALL NZ, 0x1234
+  memory.writeByte(0x0001, 0x34);
+  memory.writeByte(0x0002, 0x12);
+  cpu.PC = 0;
+  cpu.SP = 0xFFFE;
+  cpu.setZeroFlag(false);
+
+  cpu.executeOpcode();
+
+  EXPECT_EQ(cpu.PC, 0x1234);
+  EXPECT_EQ(memory.readWord(0xFFFE), 0x0003);
+  EXPECT_EQ(cpu.SP, 0xFFFD);
+}
+
+// ✅ **Test: HALT**
+TEST_F(CPUTest, HALT) {
+  memory.writeByte(0x0000, 0x76);  // HALT
+  cpu.PC = 0;
+
+  cpu.executeOpcode();
+
+  // Add check for HALTed state if implemented
+  EXPECT_EQ(cpu.PC, 1);
 }
 
 // ✅ **Test: RET**
@@ -315,8 +409,10 @@ TEST_F(CPUTest, RST) {
   cpu.executeOpcode();
 
   EXPECT_EQ(cpu.PC, 0x0000);
-  EXPECT_EQ(cpu.SP, 0x0001);
+  EXPECT_EQ(memory.readWord(0xFFFE), 0x0001);
+  EXPECT_EQ(cpu.SP, 0xFFFE);
 }
+
 // ✅ **Test: LD_r8_r8**
 TEST_F(CPUTest, LD_r8_r8) {
   cpu.B = 0x42;

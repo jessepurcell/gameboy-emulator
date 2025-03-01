@@ -21,7 +21,7 @@ class CPU {
   uint8_t &L = registers[6];
   uint8_t &H = registers[7];
 
-  uint16_t SP = 0, PC = 0;
+  uint16_t SP = 0xFFFE, PC = 0;
 
   // Access and return reference to combined AF using pointer
   uint16_t &AF() {

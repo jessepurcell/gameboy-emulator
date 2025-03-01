@@ -520,23 +520,26 @@ void CPU::JP_HL() { PC = HL(); }
 
 void CPU::CALL_n16() {
   uint16_t address = fetchWord();
-  SP = PC;
+  SP -= 2;
+  memory.writeWord(SP, PC);
   PC = address;
 }
 
-void CPU::RET() { PC = memory.readWord(SP++); }
+void CPU::RET() { PC = memory.readWord(--SP); }
 
 void CPU::RETI() {
-  PC = memory.readWord(SP++);
+  PC = memory.readWord(SP);
   EI();
 }
 
 void CPU::PUSH_r16(uint16_t &registerPair) {
-  memory.writeWord(--SP, registerPair);
+  SP -= 2;
+  memory.writeWord(SP, registerPair);
 }
 
 void CPU::POP_r16(uint16_t &registerPair) {
-  registerPair = memory.readWord(SP++);
+  SP += 2;
+  registerPair = memory.readWord(SP);
 }
 
 void CPU::LDH_n8_A() {
@@ -714,13 +717,15 @@ void CPU::JP_con_n16(bool condition) {
 void CPU::CALL_con_n16(bool condition) {
   uint16_t address = fetchWord();
   if (condition) {
-    SP = PC;
+    SP -= 2;
+    memory.writeWord(SP, PC);
     PC = address;
   }
 }
 
 void CPU::RST(uint16_t target) {
-  SP = PC;
+  SP -= 2;
+  memory.writeWord(SP, PC);
   PC = target;
 }
 
