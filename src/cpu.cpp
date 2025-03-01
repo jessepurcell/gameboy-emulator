@@ -165,10 +165,6 @@ uint16_t CPU::fetchWord() {
   return (hi << 8) | lo;
 }
 
-void CPU::updateFlags() {
-  // TODO: Implement flag updates
-}
-
 void CPU::LD_r8_r8(uint8_t &destinationRegister, uint8_t sourceRegister) {
   destinationRegister = sourceRegister;
 }
