@@ -46,16 +46,12 @@ Ensure you have the following installed:
 git clone https://github.com/jessepurcell/gameboy-emulator.git
 cd gameboy-emulator
 
-# Initialize submodules (for GoogleTest)
+# Initialize submodules
 git submodule update --init --recursive
 
 # Create a build directory and compile
 mkdir build && cd build
 cmake ..
-make
-
-# Run the emulator (once implemented)
-./gameboy-emulator
 ```
 
 ---
