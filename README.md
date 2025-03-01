@@ -25,7 +25,7 @@
 
 ## **Planned**
 
-❌ **Full CPU Emulation** – Implements the Game Boy's **LR35902** CPU (Z80-like).  
+✔️ **Full CPU Emulation** – Implements the Game Boy's **LR35902** CPU (Z80-like).  
 ❌ **Memory Management** – Emulates **8KB RAM**, **8KB VRAM**, and cartridge ROM banking.  
 ❌ **Graphics (PPU) Emulation** – Uses SDL3 for pixel-accurate rendering.  
 ❌ **Sound Emulation** – Implements the Game Boy’s **APU** (Audio Processing Unit).  
@@ -95,7 +95,7 @@ When implemented, you will be able to run a Game Boy ROM like this:
 
 📌 **Phase 1**:  
 
-- [ ] Implement CPU (LR35902) instruction set  
+- [x] Implement CPU (LR35902) instruction set  
 - [ ] Implement memory banking system  
 - [ ] Add basic I/O operations  
 
