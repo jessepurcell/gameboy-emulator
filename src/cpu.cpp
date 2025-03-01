@@ -725,3 +725,7 @@ void CPU::RST(uint16_t target) {
 }
 
 void CPU::LDH_C_A() { memory.writeByte(0xFF00 + C, A); }
+
+void CPU::LDH_A_r8(uint8_t &registerPair) {
+  A = memory.readByte(0xFF00 + registerPair);
+}

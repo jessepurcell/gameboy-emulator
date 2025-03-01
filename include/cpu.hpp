@@ -200,7 +200,7 @@ class CPU {
   void LDH_r8_A();
   void LDH_n8_A();
   void LD_n16_A();
-  void LDH_A_r8();
+  void LDH_A_r8(uint8_t &registerPair);
   void LDH_A_n8();
   void LD_A_n16();
 
