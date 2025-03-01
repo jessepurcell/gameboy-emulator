@@ -246,7 +246,7 @@ CPU::CPU(Memory &memory) : memory(memory) {
   opcodeTable[0xCC] = std::bind(&CPU::CALL_con_n16, this, getZeroFlag());
   opcodeTable[0xCD] = std::bind(&CPU::CALL_n16, this);
   opcodeTable[0xCE] = std::bind(&CPU::ADC_A_n8, this);
-  // opcodeTable[0xCF] = std::bind(&CPU::RES, this, 0x08);
+  opcodeTable[0xCF] = std::bind(&CPU::RST, this, 0x08);
   opcodeTable[0xD0] = std::bind(&CPU::RET_con, this, false);
   opcodeTable[0xD1] = std::bind(&CPU::POP_r16, this, std::ref(DE()));
   opcodeTable[0xD2] = std::bind(&CPU::JP_con_n16, this, false);
