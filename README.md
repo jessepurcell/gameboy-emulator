@@ -1,4 +1,5 @@
 # 🎮 Game Boy Emulator
+
 ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/jessepurcell/gameboy-emulator/ci.yml?branch=main)
 ![GitHub repo size](https://img.shields.io/github/repo-size/jessepurcell/gameboy-emulator)
 ![GitHub license](https://img.shields.io/github/license/jessepurcell/gameboy-emulator)
@@ -10,6 +11,7 @@
 ---
 
 ## 📖 **Table of Contents**
+
 - [🎮 Features](#-features)
 - [⚙️ Installation](#️-installation)
 - [🚀 Usage](#-usage)
@@ -19,7 +21,10 @@
 
 ---
 
-## 🎮 **Features (Planned)**
+## 🎮 **Features**
+
+## **Planned**
+
 ❌ **Full CPU Emulation** – Implements the Game Boy's **LR35902** CPU (Z80-like).  
 ❌ **Memory Management** – Emulates **8KB RAM**, **8KB VRAM**, and cartridge ROM banking.  
 ❌ **Graphics (PPU) Emulation** – Uses SDL3 for pixel-accurate rendering.  
@@ -33,15 +38,20 @@
 ---
 
 ## ⚙️ **Installation**
+
 ### **🔹 Requirements**
+
 Ensure you have the following installed:
+
 - **C++23** compiler (GCC, Clang, or MSVC)
 - **CMake 3.14+**
 - **GoogleTest** (for testing)
 - **SDL3** (for graphics rendering)
 
 ### **🔹 Build Instructions**
+
 ```sh
+
 # Clone the repository
 git clone https://github.com/jessepurcell/gameboy-emulator.git
 cd gameboy-emulator
@@ -57,14 +67,17 @@ cmake ..
 ---
 
 ## 🚀 **Usage**
+
 🚧 **Emulator is not yet functional.** 🚧  
 
 When implemented, you will be able to run a Game Boy ROM like this:
+
 ```sh
 ./gameboy-emulator path/to/rom.gb
 ```
 
 ### **🎮 Planned Controls**
+
 | Game Boy Button | Keyboard Mapping |
 |----------------|-----------------|
 | A             | X               |
@@ -79,17 +92,21 @@ When implemented, you will be able to run a Game Boy ROM like this:
 ---
 
 ## 📝 **Roadmap**
+
 📌 **Phase 1**:  
+
 - [ ] Implement CPU (LR35902) instruction set  
 - [ ] Implement memory banking system  
 - [ ] Add basic I/O operations  
 
 📌 **Phase 2**:  
+
 - [ ] Implement PPU for graphics rendering  
 - [ ] Implement APU for audio emulation  
 - [ ] Add save state support  
 
 📌 **Phase 3**:  
+
 - [ ] Add Game Boy Color support  
 - [ ] Optimize performance  
 - [ ] Port to WebAssembly  
@@ -97,11 +114,13 @@ When implemented, you will be able to run a Game Boy ROM like this:
 ---
 
 ## 📜 **License**
+
 This project is licensed under the **MIT License**. See [`LICENSE`](LICENSE) for details.
 
 ---
 
 ## 🤝 **Contributing**
+
 Contributions are welcome! 🎉  
 
 1. Fork the repository 🍴  
@@ -113,6 +132,7 @@ Contributions are welcome! 🎉
 ---
 
 ## 📬 **Contact**
-📧 Email: **jesse.purcell@my.jcu.edu.au**  
+
+📧 Email: **<jesse.purcell@my.jcu.edu.au>**  
 🐦 Twitter: **[@Slaydevil1](https://x.com/Slaydevil1)**  
 💻 GitHub: **[jessepurcell](https://github.com/jessepurcell)**  
