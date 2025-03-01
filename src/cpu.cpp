@@ -145,9 +145,132 @@ CPU::CPU(Memory &memory) : memory(memory) {
   opcodeTable[0x7C] = std::bind(&CPU::LD_r8_r8, this, std::ref(A), std::ref(H));
   opcodeTable[0x7D] = std::bind(&CPU::LD_r8_r8, this, std::ref(A), std::ref(L));
   // opcodeTable[0x7E] = std::bind(&CPU::LD_r8_r16, this, std::ref(A),
-  // std::ref(HL()));
   opcodeTable[0x7F] = std::bind(&CPU::LD_r8_r8, this, std::ref(A), std::ref(A));
-  // Continue with more opcodes...
+  opcodeTable[0x80] = std::bind(&CPU::ADD_A_r8, this, std::ref(B));
+  opcodeTable[0x81] = std::bind(&CPU::ADD_A_r8, this, std::ref(C));
+  opcodeTable[0x82] = std::bind(&CPU::ADD_A_r8, this, std::ref(D));
+  opcodeTable[0x83] = std::bind(&CPU::ADD_A_r8, this, std::ref(E));
+  opcodeTable[0x84] = std::bind(&CPU::ADD_A_r8, this, std::ref(H));
+  opcodeTable[0x85] = std::bind(&CPU::ADD_A_r8, this, std::ref(L));
+
+  // opcodeTable[0x86] = std::bind(&CPU::ADD_A_r16, this, std::ref(HL()));
+  opcodeTable[0x87] = std::bind(&CPU::ADD_A_r8, this, std::ref(A));
+  opcodeTable[0x88] = std::bind(&CPU::ADC_A_r8, this, std::ref(B));
+  opcodeTable[0x89] = std::bind(&CPU::ADC_A_r8, this, std::ref(C));
+  opcodeTable[0x8A] = std::bind(&CPU::ADC_A_r8, this, std::ref(D));
+  opcodeTable[0x8B] = std::bind(&CPU::ADC_A_r8, this, std::ref(E));
+  opcodeTable[0x8C] = std::bind(&CPU::ADC_A_r8, this, std::ref(H));
+  opcodeTable[0x8D] = std::bind(&CPU::ADC_A_r8, this, std::ref(L));
+  // opcodeTable[0x8E] = std::bind(&CPU::ADC_A_r16, this, std::ref(HL()));
+  opcodeTable[0x8F] = std::bind(&CPU::ADC_A_r8, this, std::ref(A));
+
+  opcodeTable[0x90] = std::bind(&CPU::SUB_A_r8, this, std::ref(B));
+  opcodeTable[0x91] = std::bind(&CPU::SUB_A_r8, this, std::ref(C));
+  opcodeTable[0x92] = std::bind(&CPU::SUB_A_r8, this, std::ref(D));
+  opcodeTable[0x93] = std::bind(&CPU::SUB_A_r8, this, std::ref(E));
+  opcodeTable[0x94] = std::bind(&CPU::SUB_A_r8, this, std::ref(H));
+  opcodeTable[0x95] = std::bind(&CPU::SUB_A_r8, this, std::ref(L));
+  // opcodeTable[0x96] = std::bind(&CPU::SUB_A_r16, this, std::ref(HL()));
+  opcodeTable[0x97] = std::bind(&CPU::SUB_A_r8, this, std::ref(A));
+
+  opcodeTable[0x98] = std::bind(&CPU::SBC_A_r8, this, std::ref(B));
+  opcodeTable[0x99] = std::bind(&CPU::SBC_A_r8, this, std::ref(C));
+  opcodeTable[0x9A] = std::bind(&CPU::SBC_A_r8, this, std::ref(D));
+  opcodeTable[0x9B] = std::bind(&CPU::SBC_A_r8, this, std::ref(E));
+  opcodeTable[0x9C] = std::bind(&CPU::SBC_A_r8, this, std::ref(H));
+  opcodeTable[0x9D] = std::bind(&CPU::SBC_A_r8, this, std::ref(L));
+  // opcodeTable[0x9E] = std::bind(&CPU::SBC_A_r16, this, std::ref(HL()));
+  opcodeTable[0x9F] = std::bind(&CPU::SBC_A_r8, this, std::ref(A));
+
+  opcodeTable[0xA0] = std::bind(&CPU::AND_A_r8, this, std::ref(B));
+  opcodeTable[0xA1] = std::bind(&CPU::AND_A_r8, this, std::ref(C));
+  opcodeTable[0xA2] = std::bind(&CPU::AND_A_r8, this, std::ref(D));
+  opcodeTable[0xA3] = std::bind(&CPU::AND_A_r8, this, std::ref(E));
+  opcodeTable[0xA4] = std::bind(&CPU::AND_A_r8, this, std::ref(H));
+  opcodeTable[0xA5] = std::bind(&CPU::AND_A_r8, this, std::ref(L));
+  // opcodeTable[0xA6] = std::bind(&CPU::AND_A_r16, this, std::ref(HL()));
+  opcodeTable[0xA7] = std::bind(&CPU::AND_A_r8, this, std::ref(A));
+
+  opcodeTable[0xA8] = std::bind(&CPU::XOR_A_r8, this, std::ref(B));
+  opcodeTable[0xA9] = std::bind(&CPU::XOR_A_r8, this, std::ref(C));
+  opcodeTable[0xAA] = std::bind(&CPU::XOR_A_r8, this, std::ref(D));
+  opcodeTable[0xAB] = std::bind(&CPU::XOR_A_r8, this, std::ref(E));
+  opcodeTable[0xAC] = std::bind(&CPU::XOR_A_r8, this, std::ref(H));
+  opcodeTable[0xAD] = std::bind(&CPU::XOR_A_r8, this, std::ref(L));
+  // opcodeTable[0xAE] = std::bind(&CPU::XOR_A_r16, this, std::ref(HL()));
+  opcodeTable[0xAF] = std::bind(&CPU::XOR_A_r8, this, std::ref(A));
+
+  opcodeTable[0xB0] = std::bind(&CPU::OR_A_r8, this, std::ref(B));
+  opcodeTable[0xB1] = std::bind(&CPU::OR_A_r8, this, std::ref(C));
+  opcodeTable[0xB2] = std::bind(&CPU::OR_A_r8, this, std::ref(D));
+  opcodeTable[0xB3] = std::bind(&CPU::OR_A_r8, this, std::ref(E));
+  opcodeTable[0xB4] = std::bind(&CPU::OR_A_r8, this, std::ref(H));
+  opcodeTable[0xB5] = std::bind(&CPU::OR_A_r8, this, std::ref(L));
+  // opcodeTable[0xB6] = std::bind(&CPU::OR_A_r16, this, std::ref(HL()));
+  opcodeTable[0xB7] = std::bind(&CPU::OR_A_r8, this, std::ref(A));
+
+  opcodeTable[0xB8] = std::bind(&CPU::CP_A_r8, this, std::ref(B));
+  opcodeTable[0xB9] = std::bind(&CPU::CP_A_r8, this, std::ref(C));
+  opcodeTable[0xBA] = std::bind(&CPU::CP_A_r8, this, std::ref(D));
+  opcodeTable[0xBB] = std::bind(&CPU::CP_A_r8, this, std::ref(E));
+  opcodeTable[0xBC] = std::bind(&CPU::CP_A_r8, this, std::ref(H));
+  opcodeTable[0xBD] = std::bind(&CPU::CP_A_r8, this, std::ref(L));
+  // opcodeTable[0xBE] = std::bind(&CPU::CP_A_r16, this, std::ref(HL()));
+  opcodeTable[0xBF] = std::bind(&CPU::CP_A_r8, this, std::ref(A));
+
+  // opcodeTable[0xC0] = std::bind(&CPU::RET_cc, this, std::ref(Flag::NZ));
+  opcodeTable[0xC1] = std::bind(&CPU::POP_r16, this, std::ref(BC()));
+  // opcodeTable[0xC2] = std::bind(&CPU::JP_cc_n16, this, std::ref(Flag::NZ));
+  opcodeTable[0xC3] = std::bind(&CPU::JP_n16, this);
+  // opcodeTable[0xC4] = std::bind(&CPU::CALL_cc_n16, this, std::ref(Flag::NZ));
+  opcodeTable[0xC5] = std::bind(&CPU::PUSH_r16, this, std::ref(BC()));
+  opcodeTable[0xC6] = std::bind(&CPU::ADD_A_n8, this);
+  // opcodeTable[0xC7] = std::bind(&CPU::RST, this, 0x00);
+  // opcodeTable[0xC8] = std::bind(&CPU::RET_cc, this, std::ref(Flag::Z));
+  opcodeTable[0xC9] = std::bind(&CPU::RET, this);
+  // opcodeTable[0xCA] = std::bind(&CPU::JP_cc_n16, this, std::ref(Flag::Z));
+  // opcodeTable[0xCB] = std::bind(&CPU::PREFIX, this);
+  // opcodeTable[0xCC] = std::bind(&CPU::CALL_cc_n16, this, std::ref(Flag::Z));
+  opcodeTable[0xCD] = std::bind(&CPU::CALL_n16, this);
+  opcodeTable[0xCE] = std::bind(&CPU::ADC_A_n8, this);
+  // opcodeTable[0xCF] = std::bind(&CPU::RST, this, 0x08);
+  // opcodeTable[0xD0] = std::bind(&CPU::RET_cc, this, std::ref(Flag::NC));
+  opcodeTable[0xD1] = std::bind(&CPU::POP_r16, this, std::ref(DE()));
+  // opcodeTable[0xD2] = std::bind(&CPU::JP_cc_n16, this, std::ref(Flag::NC));
+  // opcodeTable[0xD4] = std::bind(&CPU::CALL_cc_n16, this, std::ref(Flag::NC));
+  opcodeTable[0xD5] = std::bind(&CPU::PUSH_r16, this, std::ref(DE()));
+  opcodeTable[0xD6] = std::bind(&CPU::SUB_A_n8, this);
+  // opcodeTable[0xD7] = std::bind(&CPU::RST, this, 0x10);
+  // opcodeTable[0xD8] = std::bind(&CPU::RET_cc, this, std::ref(Flag::C));
+  opcodeTable[0xD9] = std::bind(&CPU::RETI, this);
+  // opcodeTable[0xDA] = std::bind(&CPU::JP_cc_n16, this, std::ref(Flag::C));
+  // opcodeTable[0xDC] = std::bind(&CPU::CALL_cc_n16, this, std::ref(Flag::C));
+  opcodeTable[0xDE] = std::bind(&CPU::SBC_A_n8, this);
+  // opcodeTable[0xDF] = std::bind(&CPU::RST, this, 0x18);
+  opcodeTable[0xE0] = std::bind(&CPU::LDH_n8_A, this);
+  opcodeTable[0xE1] = std::bind(&CPU::POP_r16, this, std::ref(HL()));
+  // opcodeTable[0xE2] = std::bind(&CPU::LDH_C_A, this);
+  opcodeTable[0xE5] = std::bind(&CPU::PUSH_r16, this, std::ref(HL()));
+  opcodeTable[0xE6] = std::bind(&CPU::AND_A_n8, this);
+  // opcodeTable[0xE7] = std::bind(&CPU::RST, this, 0x20);
+  opcodeTable[0xE8] = std::bind(&CPU::ADD_SP_n8, this);
+  opcodeTable[0xE9] = std::bind(&CPU::JP_HL, this);
+  opcodeTable[0xEA] = std::bind(&CPU::LD_n16_A, this);
+  opcodeTable[0xEE] = std::bind(&CPU::XOR_A_n8, this);
+  // opcodeTable[0xEF] = std::bind(&CPU::RST, this, 0x28);
+  opcodeTable[0xF0] = std::bind(&CPU::LDH_A_n8, this);
+  // opcodeTable[0xF1] = std::bind(&CPU::POP_r16, this, std::ref(AF()));
+  // opcodeTable[0xF2] = std::bind(&CPU::LDH_A_C, this);
+  opcodeTable[0xF3] = std::bind(&CPU::DI, this);
+  // opcodeTable[0xF5] = std::bind(&CPU::PUSH_r16, this, std::ref(AF()));
+  opcodeTable[0xF6] = std::bind(&CPU::OR_A_n8, this);
+  // opcodeTable[0xF7] = std::bind(&CPU::RST, this, 0x30);
+  opcodeTable[0xF8] = std::bind(&CPU::LD_HL_SP_n8, this);
+  opcodeTable[0xF9] = std::bind(&CPU::LD_SP_HL, this);
+  opcodeTable[0xFA] = std::bind(&CPU::LD_A_n16, this);
+  opcodeTable[0xFB] = std::bind(&CPU::EI, this);
+  opcodeTable[0xFE] = std::bind(&CPU::CP_A_n8, this);
+  // opcodeTable[0xFF] = std::bind(&CPU::RST, this, 0x38);
 }
 
 void CPU::executeOpcode() {
