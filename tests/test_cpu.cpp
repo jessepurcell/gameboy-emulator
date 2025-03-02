@@ -280,22 +280,6 @@ TEST_F(CPUTest, JP_n16) {
   EXPECT_EQ(cpu.PC, 0x1234);
 }
 
-// ✅ **Test: CALL_n16**
-TEST_F(CPUTest, CALL_n16) {
-  memory.writeByte(0x0000, 0xCD);  // CALL 0x1234
-  memory.writeByte(0x0001, 0x34);
-  memory.writeByte(0x0002, 0x12);
-  cpu.PC = 0;
-  cpu.SP = 0xFFFE;
-
-  cpu.executeOpcode();
-
-  EXPECT_EQ(cpu.PC, 0x1234);  // PC should jump to 0x1234
-  EXPECT_EQ(memory.readWord(0xFFFC),
-            0x0003);          // Return address should be stored at 0xFFFC
-  EXPECT_EQ(cpu.SP, 0xFFFC);  // SP should decrement by 2
-}
-
 // ✅ **Test: ADD_SP_n8**
 TEST_F(CPUTest, ADD_SP_n8) {
   cpu.SP = 0xFFF0;
@@ -368,13 +352,29 @@ TEST_F(CPUTest, CALL_con_n16) {
   memory.writeByte(0x0002, 0x12);
   cpu.PC = 0;
   cpu.SP = 0xFFFE;
-  cpu.setZeroFlag(false);
+  cpu.setCarryFlag(true);
 
   cpu.executeOpcode();
 
   EXPECT_EQ(cpu.PC, 0x1234);
   EXPECT_EQ(memory.readWord(0xFFFE), 0x0003);
   EXPECT_EQ(cpu.SP, 0xFFFD);
+}
+
+// ✅ **Test: CALL_n16**
+TEST_F(CPUTest, CALL_n16) {
+  memory.writeByte(0x0000, 0xCD);  // CALL 0x1234
+  memory.writeByte(0x0001, 0x34);
+  memory.writeByte(0x0002, 0x12);
+  cpu.PC = 0;
+  cpu.SP = 0xFFFE;
+
+  cpu.executeOpcode();
+
+  EXPECT_EQ(cpu.PC, 0x1234);  // PC should jump to 0x1234
+  EXPECT_EQ(memory.readWord(0xFFFC),
+            0x0003);          // Return address should be stored at 0xFFFC
+  EXPECT_EQ(cpu.SP, 0xFFFC);  // SP should decrement by 2
 }
 
 // ✅ **Test: HALT**

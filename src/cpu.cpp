@@ -276,7 +276,8 @@ CPU::CPU(Memory &memory) : memory(memory) {
   opcodeTable[0xF1] = std::bind(&CPU::POP_r16, this, std::ref(AF()));
   opcodeTable[0xF2] = std::bind(&CPU::LDH_A_r8, this, std::ref(C));
   opcodeTable[0xF3] = std::bind(&CPU::DI, this);
-  opcodeTable[0xF4] = std::bind(&CPU::CALL_con_n16, this, false);
+
+  // opcodeTable[0xF4] = std::bind(&CPU::CALL_con_n16, this, false);
   opcodeTable[0xF5] = std::bind(&CPU::PUSH_r16, this, std::ref(AF()));
   opcodeTable[0xF6] = std::bind(&CPU::OR_A_n8, this);
   opcodeTable[0xF7] = std::bind(&CPU::RST, this, 0x30);
@@ -715,11 +716,10 @@ void CPU::JP_con_n16(bool condition) {
 }
 
 void CPU::CALL_con_n16(bool condition) {
-  uint16_t address = fetchWord();
   if (condition) {
-    SP -= 2;
-    memory.writeWord(SP, PC);
-    PC = address;
+    CALL_n16();
+  } else {
+    fetchWord();
   }
 }
 
