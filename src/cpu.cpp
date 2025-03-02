@@ -66,7 +66,7 @@ CPU::CPU(Memory &memory) : memory(memory) {
   opcodeTable[0x35] = std::bind(&CPU::DEC_r16, this, std::ref(HL()));
   opcodeTable[0x36] = std::bind(&CPU::LD_r16_n8, this, std::ref(HL()));
   opcodeTable[0x37] = std::bind(&CPU::SCF, this);
-  opcodeTable[0x38] = std::bind(&CPU::JR_con_n8, this, false);
+  opcodeTable[0x38] = std::bind(&CPU::JR_con_n8, this, getCarryFlag());
   opcodeTable[0x39] = std::bind(&CPU::ADD_HL_r16, this, std::ref(SP));
   opcodeTable[0x3A] = std::bind(&CPU::LD_A_r16, this, std::ref(HL()));
   opcodeTable[0x3D] = std::bind(&CPU::DEC_r8, this, std::ref(A));
@@ -230,32 +230,30 @@ CPU::CPU(Memory &memory) : memory(memory) {
   opcodeTable[0xBE] = std::bind(&CPU::CP_A_r16, this, std::ref(HL()));
   opcodeTable[0xBF] = std::bind(&CPU::CP_A_r8, this, std::ref(A));
 
-  opcodeTable[0xC0] = std::bind(&CPU::RET_con, this, false);
+  opcodeTable[0xC0] = std::bind(&CPU::RET_con, this, !getZeroFlag());
   opcodeTable[0xC1] = std::bind(&CPU::POP_r16, this, std::ref(BC()));
-  opcodeTable[0xC2] = std::bind(&CPU::JP_con_n16, this, false);
+  opcodeTable[0xC2] = std::bind(&CPU::JP_con_n16, this, !getZeroFlag());
   opcodeTable[0xC3] = std::bind(&CPU::JP_n16, this);
-  opcodeTable[0xC4] =
-      std::bind(&CPU::CALL_con_n16, this, getSubtractFlag() | getZeroFlag());
+  opcodeTable[0xC4] = std::bind(&CPU::CALL_con_n16, this, !getZeroFlag());
   opcodeTable[0xC5] = std::bind(&CPU::PUSH_r16, this, std::ref(BC()));
   opcodeTable[0xC6] = std::bind(&CPU::ADD_A_n8, this);
   opcodeTable[0xC7] = std::bind(&CPU::RST, this, 0x00);
-  opcodeTable[0xC8] = std::bind(&CPU::RET_con, this, false);
+  opcodeTable[0xC8] = std::bind(&CPU::RET_con, this, getZeroFlag());
   opcodeTable[0xC9] = std::bind(&CPU::RET, this);
-  opcodeTable[0xCA] = std::bind(&CPU::JP_con_n16, this, false);
+  opcodeTable[0xCA] = std::bind(&CPU::JP_con_n16, this, getZeroFlag());
   // opcodeTable[0xCB] = std::bind(&CPU::PREFIX, this);
   opcodeTable[0xCC] = std::bind(&CPU::CALL_con_n16, this, getZeroFlag());
   opcodeTable[0xCD] = std::bind(&CPU::CALL_n16, this);
   opcodeTable[0xCE] = std::bind(&CPU::ADC_A_n8, this);
   opcodeTable[0xCF] = std::bind(&CPU::RST, this, 0x08);
-  opcodeTable[0xD0] = std::bind(&CPU::RET_con, this, false);
+  opcodeTable[0xD0] = std::bind(&CPU::RET_con, this, !getCarryFlag());
   opcodeTable[0xD1] = std::bind(&CPU::POP_r16, this, std::ref(DE()));
-  opcodeTable[0xD2] = std::bind(&CPU::JP_con_n16, this, false);
-  opcodeTable[0xD4] =
-      std::bind(&CPU::CALL_con_n16, this, getSubtractFlag() | getCarryFlag());
+  opcodeTable[0xD2] = std::bind(&CPU::JP_con_n16, this, !getCarryFlag());
+  opcodeTable[0xD4] = std::bind(&CPU::CALL_con_n16, this, !getCarryFlag());
   opcodeTable[0xD5] = std::bind(&CPU::PUSH_r16, this, std::ref(DE()));
   opcodeTable[0xD6] = std::bind(&CPU::SUB_A_n8, this);
   opcodeTable[0xD7] = std::bind(&CPU::RST, this, 0x10);
-  opcodeTable[0xD8] = std::bind(&CPU::RET_con, this, false);
+  opcodeTable[0xD8] = std::bind(&CPU::RET_con, this, getCarryFlag());
   opcodeTable[0xD9] = std::bind(&CPU::RETI, this);
   opcodeTable[0xDA] = std::bind(&CPU::JP_con_n16, this, getCarryFlag());
   opcodeTable[0xDC] = std::bind(&CPU::CALL_con_n16, this, getCarryFlag());
@@ -526,11 +524,15 @@ void CPU::CALL_n16() {
   PC = address;
 }
 
-void CPU::RET() { PC = memory.readWord(--SP); }
+void CPU::RET() {
+  PC = memory.readWord(SP);
+  SP += 2;
+}
 
 void CPU::RETI() {
   PC = memory.readWord(SP);
-  EI();
+  SP += 2;
+  IME = true;
 }
 
 void CPU::PUSH_r16(uint16_t &registerPair) {

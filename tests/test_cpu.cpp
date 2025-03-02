@@ -320,10 +320,10 @@ TEST_F(CPUTest, JR_con_n8) {
 
 // ✅ **Test: RET_con**
 TEST_F(CPUTest, RET_con) {
-  memory.writeWord(0xFFFE, 0x1234);
+  memory.writeWord(0xFFFD, 0x1234);
   memory.writeByte(0x0000, 0xC0);  // RET NZ
   cpu.PC = 0;
-  cpu.SP = 0xFFFE;
+  cpu.SP = 0xFFFD;
   cpu.setZeroFlag(false);
 
   cpu.executeOpcode();
@@ -347,18 +347,19 @@ TEST_F(CPUTest, JP_con_n16) {
 
 // ✅ **Test: CALL_con_n16**
 TEST_F(CPUTest, CALL_con_n16) {
-  memory.writeByte(0x0000, 0xC4);  // CALL NZ, 0x1234
+  memory.writeByte(0x0000, 0xC4);  // CALL 0x1234
   memory.writeByte(0x0001, 0x34);
   memory.writeByte(0x0002, 0x12);
   cpu.PC = 0;
   cpu.SP = 0xFFFE;
-  cpu.setCarryFlag(true);
+  cpu.setCarryFlag(false);
 
   cpu.executeOpcode();
 
-  EXPECT_EQ(cpu.PC, 0x1234);
-  EXPECT_EQ(memory.readWord(0xFFFE), 0x0003);
-  EXPECT_EQ(cpu.SP, 0xFFFD);
+  EXPECT_EQ(cpu.PC, 0x1234);  // PC should jump to 0x1234
+  EXPECT_EQ(memory.readWord(0xFFFC),
+            0x0003);          // Return address should be stored at 0xFFFC
+  EXPECT_EQ(cpu.SP, 0xFFFC);  // SP should decrement by 2
 }
 
 // ✅ **Test: CALL_n16**
@@ -390,10 +391,10 @@ TEST_F(CPUTest, HALT) {
 
 // ✅ **Test: RET**
 TEST_F(CPUTest, RET) {
-  memory.writeWord(0xFFFE, 0x1234);
+  memory.writeWord(0xFFFD, 0x1234);
   memory.writeByte(0x0000, 0xC9);  // RET
   cpu.PC = 0;
-  cpu.SP = 0xFFFE;
+  cpu.SP = 0xFFFD;
 
   cpu.executeOpcode();
 
@@ -473,10 +474,10 @@ TEST_F(CPUTest, JP_HL) {
 
 // ✅ **Test: RETI**
 TEST_F(CPUTest, RETI) {
-  memory.writeWord(0xFFFE, 0x1234);
+  memory.writeWord(0xFFFD, 0x1234);
   memory.writeByte(0x0000, 0xD9);  // RETI
   cpu.PC = 0;
-  cpu.SP = 0xFFFE;
+  cpu.SP = 0xFFFD;
 
   cpu.executeOpcode();
 
