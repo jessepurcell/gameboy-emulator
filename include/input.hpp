@@ -2,8 +2,8 @@
 
 class Input {
  public:
-  Input();
-  ~Input();
+  Input() {};
+  ~Input() {};
 
   void pollEvents();
 };

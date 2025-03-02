@@ -305,6 +305,7 @@ void CPU::bindOpcodes() {
 
 void CPU::executeOpcode() {
   uint8_t opcode = fetchByte();
+  printf("Executing opcode: 0x%02X\n", opcode);
   opcodeTable[opcode]();
 }
 

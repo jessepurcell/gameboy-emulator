@@ -8,8 +8,8 @@
 #include "memory.hpp"
 #include "timers.hpp"
 
-CPU cpu;
 Memory memory;
+CPU cpu{memory};
 GPU gpu;
 Input input;
 Timers timers;
@@ -44,7 +44,7 @@ void runEmulator() {
     // Handle Input
     input.pollEvents();
     // Synchronize to Game Boy Clock Speed
-    syncClock();
+    // syncClock();
   }
 }
 
@@ -57,6 +57,7 @@ int main(int argc, char* argv[]) {
   //   std::string romPath = argv[1];
 
   // Start Emulator Loop
+  // cpu = CPU{memory};
   runEmulator();
 
   return 0;

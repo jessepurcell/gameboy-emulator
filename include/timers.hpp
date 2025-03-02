@@ -2,8 +2,8 @@
 
 class Timers {
  public:
-  Timers();
-  ~Timers();
+  Timers() {};
+  ~Timers() {};
 
   void update();
 };

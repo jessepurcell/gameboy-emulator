@@ -20,6 +20,7 @@ target_include_directories(emulator-lib PRIVATE ${CMAKE_SOURCE_DIR}/include)
 # Add the emulator executable (includes main.cpp)
 add_executable(emulator src/main.cpp)
 target_link_libraries(emulator PRIVATE emulator-lib)
+target_include_directories(emulator PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 # Enable testing
 enable_testing()

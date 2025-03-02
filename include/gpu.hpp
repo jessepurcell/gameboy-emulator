@@ -2,8 +2,8 @@
 
 class GPU {
  public:
-  GPU();
-  ~GPU();
+  GPU() {};
+  ~GPU() {};
 
   void update();
 };
