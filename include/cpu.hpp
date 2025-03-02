@@ -116,6 +116,8 @@ class CPU {
   // Lookup tables for opcodes
   std::array<std::function<void()>, 256> opcodeTable{};
 
+  void logState();
+
   void bindOpcodes();
 
   // Instruction handlers

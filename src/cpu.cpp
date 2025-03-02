@@ -303,12 +303,20 @@ void CPU::bindOpcodes() {
   opcodeTable[0xFF] = std::bind(&CPU::RST, this, 0x38);
 }
 
+void CPU::logState() {
+  printf(
+      "PC: 0x%04X, SP: 0x%04X, A: 0x%02X, B: 0x%02X, C: 0x%02X, D: 0x%02X, E: "
+      "0x%02X, H: 0x%02X, L: 0x%02X, F: 0x%02X\n",
+      PC, SP, A, B, C, D, E, H, L, F);
+}
+
 void CPU::executeOpcode() {
   uint8_t opcode = fetchByte();
   printf("Executing opcode: 0x%02X\n", opcode);
+  logState();
   opcodeTable[opcode]();
+  logState();
 }
-
 void CPU::handleInterrupts() {
   if (IME) {
     uint8_t interruptFlags = memory.readByte(0xFF0F);
@@ -599,9 +607,11 @@ void CPU::LD_A_n16() {
 void CPU::LD_SP_HL() { SP = HL(); }
 
 void CPU::DI() {  // IME = false;
+  IME = false;
 }
 
 void CPU::EI() {  // IME = true;
+  IME = true;
 }
 
 void CPU::RLCA() {
