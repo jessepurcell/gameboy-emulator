@@ -1,3 +1,9 @@
+//*
+//* This file contains the declaration of the Cartridge class.
+//* The Cartridge class is responsible for loading the ROM file into memory.
+//* The Cartridge class also provides a method to read a byte from the ROM.
+//*
+
 #pragma once
 #include <filesystem>
 #include <fstream>

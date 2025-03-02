@@ -1,36 +1,42 @@
-# Prerequisites
-*.d
-
-# Compiled Object files
-*.slo
-*.lo
+# Build artifacts
+/build/
+/CMakeFiles/
+/CMakeCache.txt
+/Makefile
+cmake_install.cmake
 *.o
 *.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
 *.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
 *.a
 *.lib
-
-# Executables
+*.dll
 *.exe
-*.out
-*.app
 
-/build
-/.vscode
-/third_party
+# Editor & IDE files
+*.swp
+*.swo
+*.sublime-workspace
+.vscode/
+.idea/
+*.iml
+
+# Logs & temp files
+*.log
+*.tmp
+
+# GTest & other testing artifacts
+/tests/*.exe
+/tests/*.out
+/tests/*.log
+
+# MinGW-specific
+*.d
+
+# Ignore user-specific CMake config
+toolchain.cmake
+*.cmake.user
+
+# Submodules folder
+/third_party/
+
+/docs/
