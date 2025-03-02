@@ -1,11 +1,27 @@
-#include "../include/cpu.hpp"
-
 #include <stdio.h>
 
 #include <algorithm>
 #include <array>
+#include <cpu.hpp>
+#include <fstream>
+#include <utils.hpp>
 
 CPU::CPU(Memory &memory) : memory(memory) {
+  bindOpcodes();
+  std::vector<uint8_t> bootROM(256);
+  std::ifstream bootROMFile("boot.bin", std::ios::binary);
+  bootROMFile.read(reinterpret_cast<char *>(bootROM.data()), 256);
+
+  PC = 0x0;
+  SP = 0xFFFE;
+  A = 0x01;
+
+  for (size_t i = 0; i < bootROM.size(); i++) {
+    memory.writeByte(i, bootROM[i]);
+  }
+}
+
+void CPU::bindOpcodes() {
   // Default all opcodes to NOP to prevent crashes
   opcodeTable.fill([&]() { NOP(); });
 
@@ -290,6 +306,20 @@ CPU::CPU(Memory &memory) : memory(memory) {
 void CPU::executeOpcode() {
   uint8_t opcode = fetchByte();
   opcodeTable[opcode]();
+}
+
+void CPU::handleInterrupts() {
+  if (IME) {
+    uint8_t interruptFlags = memory.readByte(0xFF0F);
+    uint8_t interruptEnable = memory.readByte(0xFFFF);
+
+    if (interruptFlags & interruptEnable & 0x1F) {
+      IME = false;
+      memory.writeByte(0xFF0F, interruptFlags & ~interruptEnable & 0x1F);
+      PUSH_r16(PC);
+      PC = 0x0040;
+    }
+  }
 }
 
 void CPU::NOP() { /* No operation */ }

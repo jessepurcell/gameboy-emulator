@@ -10,6 +10,7 @@ class CPU {
  public:
   CPU(Memory &memory);
   void executeOpcode();
+  void handleInterrupts();
 
   // Registers
   uint8_t &F = registers[0];
@@ -114,6 +115,8 @@ class CPU {
   Memory &memory;
   // Lookup tables for opcodes
   std::array<std::function<void()>, 256> opcodeTable{};
+
+  void bindOpcodes();
 
   // Instruction handlers
   void NOP();

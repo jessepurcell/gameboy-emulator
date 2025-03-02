@@ -4,8 +4,8 @@
 #include <iostream>
 #include <vector>
 
-void printHexDump(const std::vector<uint8_t>& buffer) {
-  const size_t bytesPerRow = 16;
+inline void printHexDump(const std::vector<uint8_t>& buffer) {
+  const size_t bytesPerRow = 32;
 
   for (size_t i = 0; i < buffer.size(); i += bytesPerRow) {
     // Print offset
