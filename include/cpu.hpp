@@ -8,8 +8,23 @@
 
 class CPU {
  public:
+  /**
+   * @brief Construct a new CPU object
+   *
+   * @param memory
+   */
   CPU(Memory &memory);
+
+  /**
+   * @brief Execute the current opcode
+   *
+   */
   void executeOpcode();
+
+  /**
+   * @brief Handle interrupts
+   *
+   */
   void handleInterrupts();
 
   // Registers
@@ -25,54 +40,140 @@ class CPU {
   uint16_t SP = 0xFFF, PC = 0;
   bool IME = false;
 
-  // Access and return reference to combined AF using pointer
+  /**
+   * @brief Get the AF object
+   *
+   * @return uint16_t&
+   */
   uint16_t &AF() {
     // Cast pointer to uint16_t* to treat A and F as a 16-bit value
     return *reinterpret_cast<uint16_t *>(&registers[0]);
   }
 
-  // Access and return reference to combined BC using pointer
+  /**
+   * @brief Get the BC object
+   *
+   * @return uint16_t&
+   */
   uint16_t &BC() {
     // Cast pointer to uint16_t* to treat B and C as a 16-bit value
     return *reinterpret_cast<uint16_t *>(&registers[2]);
   }
 
+  /**
+   * @brief Get the DE object
+   *
+   * @return uint16_t&
+   */
   uint16_t &DE() {
     return *reinterpret_cast<uint16_t *>(&registers[4]);  // D and E
   }
 
+  /**
+   * @brief Get the HL object
+   *
+   * @return uint16_t&
+   */
   uint16_t &HL() {
     return *reinterpret_cast<uint16_t *>(&registers[6]);  // H and L
   }
 
+  /**
+   * @brief Set the AF object
+   *
+   * @param value
+   */
   void setAF(uint16_t value) {
     A = value >> 8;
     F = value & 0xFF;
   }
 
+  /**
+   * @brief Set the BC object
+   *
+   * @param value
+   */
   void setBC(uint16_t value) {
     B = value >> 8;
     C = value & 0xFF;
   }
 
+  /**
+   * @brief Set the DE object
+   *
+   * @param value
+   */
   void setDE(uint16_t value) {
     D = value >> 8;
     E = value & 0xFF;
   }
 
+  /**
+   * @brief Set the HL object
+   *
+   * @param value
+   */
   void setHL(uint16_t value) {
     H = value >> 8;
     L = value & 0xFF;
   }
 
-  // Fetching and execution helpers
+  /**
+   * @brief Fetch a byte from memory
+   *
+   * @return uint8_t
+   */
   uint8_t fetchByte();
+
+  /**
+   * @brief Fetch a 16-bit word from memory
+   *
+   * @return uint16_t
+   */
   uint16_t fetchWord();
+
+  /**
+   * @brief Get the Zero Flag object
+   *
+   * @return true
+   * @return false
+   */
   bool getZeroFlag() { return F & 0x80; }
+
+  /**
+   * @brief Get the Carry Flag object
+   *
+   * @return true
+   * @return false
+   */
   bool getCarryFlag() { return F & 0x10; }
+
+  /**
+   * @brief Get the Half Carry Flag object
+   *
+   * @return true
+   * @return false
+   */
   bool getHalfCarryFlag() { return F & 0x20; }
+
+  /**
+   * @brief Get the Subtract Flag object
+   *
+   * @return true
+   * @return false
+   */
   bool getSubtractFlag() { return F & 0x40; }
+
+  /**
+   * @brief Reset all flags to 0
+   */
   void resetFlags() { F = 0; }
+
+  /**
+   * @brief Set the Zero Flag object
+   *
+   * @param value
+   */
   void setCarryFlag(bool value) {
     if (value) {
       F |= 0x10;
@@ -81,6 +182,11 @@ class CPU {
     }
   }
 
+  /**
+   * @brief Set the Half Carry Flag object
+   *
+   * @param value
+   */
   void setHalfCarryFlag(bool value) {
     if (value) {
       F |= 0x20;
@@ -89,6 +195,11 @@ class CPU {
     }
   }
 
+  /**
+   * @brief Set the Subtract Flag object
+   *
+   * @param value
+   */
   void setSubtractFlag(bool value) {
     if (value) {
       F |= 0x40;
@@ -97,6 +208,11 @@ class CPU {
     }
   }
 
+  /**
+   * @brief Set the Zero Flag object
+   *
+   * @param value
+   */
   void setZeroFlag(bool value) {
     if (value) {
       F |= 0x80;
@@ -106,6 +222,10 @@ class CPU {
   }
 
  private:
+  /**
+   * @brief Registers
+   *
+   */
   uint8_t registers[8] = {0};
   uint16_t AF_register = 0;
   uint16_t BC_register = 0;
@@ -116,11 +236,22 @@ class CPU {
   // Lookup tables for opcodes
   std::array<std::function<void()>, 256> opcodeTable{};
 
+  /**
+   * @brief Log the current state of the CPU
+   *
+   */
   void logState();
 
+  /**
+   * @brief Bind opcodes to their respective handlers
+   *
+   */
   void bindOpcodes();
 
-  // Instruction handlers
+  /**
+   * @brief No operation
+   *
+   */
   void NOP();
 
   // Load Instructions
